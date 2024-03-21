@@ -49,7 +49,7 @@ void VulkanBase::drawFrame() {
 	recordCommandBuffer(imageIndex);
 	commandBuffer.endRecording();
 
-	uniformBuffer.Update(imageIndex);
+	//uniformBuffer.Update(imageIndex);
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
