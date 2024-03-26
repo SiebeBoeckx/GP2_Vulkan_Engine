@@ -39,7 +39,8 @@ void VulkanBase::drawFrame(uint32_t imageIndex) {
 	scissor.extent = swapChainExtent;
 	vkCmdSetScissor(commandBuffer.GetVkCommandBuffer(), 0, 1, &scissor);
 
-	drawScene();
+	//drawScene();
+	drawScene3D(imageIndex);
 	vkCmdEndRenderPass(commandBuffer.GetVkCommandBuffer());
 }
 

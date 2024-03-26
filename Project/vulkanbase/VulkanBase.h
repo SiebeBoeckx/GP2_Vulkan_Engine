@@ -21,6 +21,7 @@
 #include "GP2CommandPool.h"
 #include "GP2Mesh.h"
 #include "GP2DataBuffer.h"
+#include "GP2DescriptorPool.h"
 
 const std::vector<const char*> validationLayers = {
 	"VK_LAYER_KHRONOS_validation"
@@ -61,10 +62,12 @@ private:
 		createImageViews();
 		
 		// week 03
-		m_GradientShader.Initialize(device);
-		createRenderPass();
+		//m_GradientShader.Initialize(device);
+		m_3DShader.Initialize(device);
 		m_3DShader.CreateDescriptorSetLayout(device);
-		createGraphicsPipeline();
+		createRenderPass();
+		//createGraphicsPipeline();
+		createGraphicsPipeline3D();
 		createFrameBuffers();
 
 		// week 02
@@ -75,8 +78,10 @@ private:
 		indexBuffer.CreateBuffer(mesh);
 		uniformBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
 		uniformBuffer.CreateBuffer(mesh);
-		commandBuffer = commandPool.createCommandBuffer();
+		descriptorPool.Initialize(device, findQueueFamilies(physicalDevice));
+		descriptorPool.CreateDescriptorSets(m_3DShader.GetDescriptorSetLayout(), uniformBuffer);
 
+		commandBuffer = commandPool.createCommandBuffer();
 		// week 06
 		createSyncObjects();
 	}
@@ -99,6 +104,7 @@ private:
 		indexBuffer.Cleanup();
 		uniformBuffer.Cleanup();
 
+		descriptorPool.Destroy();
 		commandPool.Destroy();
 		for (auto framebuffer : swapChainFramebuffers) {
 			vkDestroyFramebuffer(device, framebuffer, nullptr);
@@ -158,17 +164,35 @@ private:
 	void initWindow();
 
 	void drawScene();
+	void drawScene3D(uint32_t imageIndex);
 
 	// Week 02
 	// Queue families
 	// CommandBuffer concept
+	//std::vector<glm::vec2> vertices {{-0.5f, -0.5f},
+	//								{0.5f, -0.5f},
+	//								{0.5f, 0.5f},
+	//								{-0.5f, 0.5f}};
+	// 
+	// std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
+	//
+	//GP2Mesh<glm::vec2> mesh{ vertices, indices };
+
+	std::vector<glm::vec3> vertices{ {-0.5f, -0.5f, 0.f},
+									{0.5f, -0.5f, 0.f},
+									{0.5f, 0.5f, 0.f},
+									{-0.5f, 0.5f, 0.f} };
+
+	std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
+
+	GP2Mesh<glm::vec3> mesh{ vertices, indices };
 
 	GP2CommandPool commandPool;
 	GP2CommandBuffer commandBuffer;
-	GP2Mesh mesh{};
 	GP2VertexBuffer vertexBuffer;
 	GP2IndexBuffer indexBuffer;
 	GP2UniformBuffer uniformBuffer;
+	GP2DescriptorPool descriptorPool;
 
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
@@ -191,6 +215,7 @@ private:
 	void createFrameBuffers();
 	void createRenderPass();
 	void createGraphicsPipeline();
+	void createGraphicsPipeline3D();
 
 	// Week 04
 	// Swap chain and image view support
