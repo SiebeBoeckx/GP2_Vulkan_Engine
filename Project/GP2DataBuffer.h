@@ -16,6 +16,7 @@ struct UniformBufferObject {
 	glm::mat4 proj;
 };
 
+//template <VertexConcept V>
 class GP2DataBuffer
 {
 public:
@@ -50,7 +51,7 @@ private:
 	}
 };
 
-template <typename VertexType>
+template <VertexConcept V>
 class GP2BufferBase
 {
 public:
@@ -70,7 +71,7 @@ public:
 		m_GraphicsQueue = graphicsQueue;
 	}
 
-	virtual void CreateBuffer(const GP2Mesh<VertexType>& mesh) = 0;
+	virtual void CreateBuffer(const GP2Mesh<V>& mesh) = 0;
 
 protected:
 	VkDevice m_Device;
@@ -123,7 +124,7 @@ class GP2VertexBuffer : public GP2BufferBase<V>
 public:
 	virtual void CreateBuffer(const GP2Mesh<V>& mesh) override
 	{
-		VkDeviceSize bufferSize = sizeof(Vertex) * mesh.GetVertices().size();
+		VkDeviceSize bufferSize = sizeof(V) * mesh.GetVertices().size();
 
 		GP2DataBuffer stagingBuffer{ m_Device
 									, m_PhysicalDevice
@@ -148,11 +149,11 @@ public:
 	}
 };
 
-template <typename VertexType>
-class GP2IndexBuffer : public GP2BufferBase<VertexType>
+template <VertexConcept V>
+class GP2IndexBuffer : public GP2BufferBase<V>
 {
 public:
-	virtual void CreateBuffer(const GP2Mesh<VertexType>& mesh) override
+	virtual void CreateBuffer(const GP2Mesh<V>& mesh) override
 	{
 		VkDeviceSize bufferSize = sizeof(mesh.GetIndices()[0]) * mesh.GetIndices().size();
 
@@ -179,8 +180,8 @@ public:
 	}
 };
 
-template <typename VertexType>
-class GP2UniformBuffer : public GP2BufferBase<VertexType>
+template <VertexConcept V>
+class GP2UniformBuffer : public GP2BufferBase<V>
 {
 public:
 	virtual void Cleanup() override
@@ -195,7 +196,7 @@ public:
 		//}
 	}
 
-	virtual void CreateBuffer(const GP2Mesh<VertexType>&) override
+	virtual void CreateBuffer(const GP2Mesh<V>&) override
 	{
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
