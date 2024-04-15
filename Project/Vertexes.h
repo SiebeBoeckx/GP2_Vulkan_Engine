@@ -49,7 +49,7 @@ struct Vertex3D {
 	static VkVertexInputBindingDescription GetBindingDescription() {
 		VkVertexInputBindingDescription bindingDescription{};
 		bindingDescription.binding = 0;
-		bindingDescription.stride = sizeof(Vertex);
+		bindingDescription.stride = sizeof(Vertex3D);
 		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		//OPTIONS:
 		//VK_VERTEX_INPUT_RATE_VERTEX: Move to the next data entry after each vertex

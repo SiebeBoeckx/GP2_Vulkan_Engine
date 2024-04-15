@@ -1,5 +1,5 @@
 #include "vulkanbase/VulkanBase.h"
-#include "GP2Mesh.h"
+//#include "GP2Mesh.h"
 
 void VulkanBase::initWindow() {
 	glfwInit();

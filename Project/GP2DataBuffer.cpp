@@ -1,6 +1,6 @@
 #include "GP2DataBuffer.h"
 #include <stdexcept>
-#include <GP2Mesh.h>
+#include "GP2Mesh.h"
 
 GP2DataBuffer::GP2DataBuffer(VkDevice device, VkPhysicalDevice physDevice, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkDeviceSize size)
 	:m_VkDevice(device)

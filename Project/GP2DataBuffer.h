@@ -126,24 +126,24 @@ public:
 	{
 		VkDeviceSize bufferSize = sizeof(V) * mesh.GetVertices().size();
 
-		GP2DataBuffer stagingBuffer{ m_Device
-									, m_PhysicalDevice
+		GP2DataBuffer stagingBuffer{ GP2BufferBase<V>::m_Device
+									, GP2BufferBase<V>::m_PhysicalDevice
 									, VK_BUFFER_USAGE_TRANSFER_SRC_BIT
 									, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 									, bufferSize };
 
 		void* data;
-		vkMapMemory(m_Device, stagingBuffer.GetBufferMemory(), 0, bufferSize, 0, &data);
+		vkMapMemory(GP2BufferBase<V>::m_Device, stagingBuffer.GetBufferMemory(), 0, bufferSize, 0, &data);
 		memcpy(data, mesh.GetVertices().data(), (size_t)bufferSize);
-		vkUnmapMemory(m_Device, stagingBuffer.GetBufferMemory());
+		vkUnmapMemory(GP2BufferBase<V>::m_Device, stagingBuffer.GetBufferMemory());
 
-		m_BufferInfo = new GP2DataBuffer(m_Device
-			, m_PhysicalDevice
-			, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
-			, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-			, bufferSize);
+		GP2BufferBase<V>::m_BufferInfo = new GP2DataBuffer(  GP2BufferBase<V>::m_Device
+															, GP2BufferBase<V>::m_PhysicalDevice
+															, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
+															, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+															, bufferSize);
 
-		CopyBuffer(stagingBuffer.GetBuffer(), m_BufferInfo->GetBuffer(), bufferSize);
+		GP2BufferBase<V>::CopyBuffer(stagingBuffer.GetBuffer(), GP2BufferBase<V>::m_BufferInfo->GetBuffer(), bufferSize);
 		/*vkDestroyBuffer(m_Device, stagingBuffer.GetBuffer(), nullptr);
 		vkFreeMemory(m_Device, stagingBuffer.GetBufferMemory(), nullptr);*/
 	}
@@ -157,24 +157,24 @@ public:
 	{
 		VkDeviceSize bufferSize = sizeof(mesh.GetIndices()[0]) * mesh.GetIndices().size();
 
-		GP2DataBuffer stagingBuffer{ m_Device
-									, m_PhysicalDevice
+		GP2DataBuffer stagingBuffer{ GP2BufferBase<V>::m_Device
+									, GP2BufferBase<V>::m_PhysicalDevice
 									, VK_BUFFER_USAGE_TRANSFER_SRC_BIT
 									, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 									, bufferSize };
 
 		void* data;
-		vkMapMemory(m_Device, stagingBuffer.GetBufferMemory(), 0, bufferSize, 0, &data);
+		vkMapMemory(GP2BufferBase<V>::m_Device, stagingBuffer.GetBufferMemory(), 0, bufferSize, 0, &data);
 		memcpy(data, mesh.GetIndices().data(), (size_t)bufferSize);
-		vkUnmapMemory(m_Device, stagingBuffer.GetBufferMemory());
+		vkUnmapMemory(GP2BufferBase<V>::m_Device, stagingBuffer.GetBufferMemory());
 
-		m_BufferInfo = new GP2DataBuffer(m_Device
-			, m_PhysicalDevice
-			, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT
-			, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-			, bufferSize);
+		GP2BufferBase<V>::m_BufferInfo = new GP2DataBuffer(   GP2BufferBase<V>::m_Device
+															, GP2BufferBase<V>::m_PhysicalDevice
+															, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT
+															, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+															, bufferSize);
 
-		CopyBuffer(stagingBuffer.GetBuffer(), m_BufferInfo->GetBuffer(), bufferSize);
+		GP2BufferBase<V>::CopyBuffer(stagingBuffer.GetBuffer(), GP2BufferBase<V>::m_BufferInfo->GetBuffer(), bufferSize);
 		/*vkDestroyBuffer(m_Device, stagingBuffer.GetBuffer(), nullptr);
 		vkFreeMemory(m_Device, stagingBuffer.GetBufferMemory(), nullptr);*/
 	}
@@ -204,14 +204,14 @@ public:
 		uniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-			uniformBufferInfos[i] = new GP2DataBuffer{ m_Device
-														, m_PhysicalDevice
+			uniformBufferInfos[i] = new GP2DataBuffer{ GP2BufferBase<V>::m_Device
+														, GP2BufferBase<V>::m_PhysicalDevice
 														, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT
 														, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 														, bufferSize };
 
 			//void* pData;
-			vkMapMemory(m_Device, uniformBufferInfos[i]->GetBufferMemory(), 0, bufferSize, 0, &uniformBuffersMapped[i]);
+			vkMapMemory(GP2BufferBase<V>::m_Device, uniformBufferInfos[i]->GetBufferMemory(), 0, bufferSize, 0, &uniformBuffersMapped[i]);
 			//uniformBuffersMapped[i] = static_cast<VkDeviceMemory*>(pData);
 		}
 	}

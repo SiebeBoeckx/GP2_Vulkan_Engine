@@ -125,7 +125,8 @@ void VulkanBase::createGraphicsPipeline() {
 	is.pVertexBindingDescriptions = &bindingDescription;
 	is.pVertexAttributeDescriptions = attributeDescriptions.data();
 	pipelineInfo.pVertexInputState = &is;
-	pipelineInfo.pInputAssemblyState = &m_GradientShader.CreateInputAssemblyStateInfo();
+	auto inputAssemblyState = m_GradientShader.CreateInputAssemblyStateInfo();
+	pipelineInfo.pInputAssemblyState = &inputAssemblyState;
 
 #pragma region pipelineInfo
 	pipelineInfo.pViewportState = &viewportState;
@@ -206,14 +207,15 @@ void VulkanBase::createGraphicsPipeline3D() {
 	pipelineInfo.pStages = m_3DShader.GetShaderStages().data();
 	VkPipelineVertexInputStateCreateInfo is = m_3DShader.CreateVertexInputStateInfo();
 
-	auto bindingDescription = Vertex::GetBindingDescription();
-	auto attributeDescriptions = Vertex::GetAttributeDescriptions();
+	auto bindingDescription = Vertex3D::GetBindingDescription();
+	auto attributeDescriptions = Vertex3D::GetAttributeDescriptions();
 	is.vertexBindingDescriptionCount = 1;
 	is.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 	is.pVertexBindingDescriptions = &bindingDescription;
 	is.pVertexAttributeDescriptions = attributeDescriptions.data();
 	pipelineInfo.pVertexInputState = &is;
-	pipelineInfo.pInputAssemblyState = &m_3DShader.CreateInputAssemblyStateInfo();
+	auto inputAssemblyState = m_3DShader.CreateInputAssemblyStateInfo();
+	pipelineInfo.pInputAssemblyState = &inputAssemblyState;
 
 #pragma region pipelineInfo
 	pipelineInfo.pViewportState = &viewportState;

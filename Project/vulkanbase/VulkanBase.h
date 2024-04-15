@@ -19,8 +19,9 @@
 #include <algorithm>
 #include "GP2Shader.h"
 #include "GP2CommandPool.h"
-#include "GP2Mesh.h"
-#include "GP2DataBuffer.h"
+//#include "GP2Mesh.h"
+//#include "GP2DataBuffer.h"
+//#include "Vertexes.h"
 #include "GP2DescriptorPool.h"
 
 const std::vector<const char*> validationLayers = {
@@ -78,7 +79,7 @@ private:
 		indexBuffer.CreateBuffer(mesh);
 		uniformBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
 		uniformBuffer.CreateBuffer(mesh);
-		descriptorPool.Initialize(device, findQueueFamilies(physicalDevice));
+		descriptorPool.Initialize(device);
 		descriptorPool.CreateDescriptorSets(m_3DShader.GetDescriptorSetLayout(), uniformBuffer);
 
 		commandBuffer = commandPool.createCommandBuffer();
@@ -178,20 +179,20 @@ private:
 	//
 	//GP2Mesh<glm::vec2> mesh{ vertices, indices };
 
-	std::vector<glm::vec3> vertices{ {-0.5f, -0.5f, 0.f},
-									{0.5f, -0.5f, 0.f},
-									{0.5f, 0.5f, 0.f},
-									{-0.5f, 0.5f, 0.f} };
+	std::vector<Vertex3D> vertices{ Vertex3D{glm::vec3{-0.5f, -0.5f, 0.f}, glm::vec3{1.f, 0.f, 0.f}},
+									Vertex3D{glm::vec3{0.5f, -0.5f, 0.f}, glm::vec3{0.f, 1.f, 0.f}},
+									Vertex3D{glm::vec3{0.5f, 0.5f, 0.f}, glm::vec3{0.f, 0.f, 1.f}},
+									Vertex3D{glm::vec3{-0.5f, 0.5f, 0.f}, glm::vec3{1.f, 1.f, 1.f}} };
 
 	std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
 
-	GP2Mesh<glm::vec3> mesh{ vertices, indices };
+	GP2Mesh<Vertex3D> mesh{ vertices, indices };
 
 	GP2CommandPool commandPool;
 	GP2CommandBuffer commandBuffer;
-	GP2VertexBuffer vertexBuffer;
-	GP2IndexBuffer indexBuffer;
-	GP2UniformBuffer uniformBuffer;
+	GP2VertexBuffer<Vertex3D> vertexBuffer;
+	GP2IndexBuffer<Vertex3D> indexBuffer;
+	GP2UniformBuffer<Vertex3D> uniformBuffer;
 	GP2DescriptorPool descriptorPool;
 
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);

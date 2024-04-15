@@ -35,7 +35,13 @@ set(SOURCES
     "labwork/Week04.cpp" 
     "labwork/Week05.cpp"
     "labwork/Week06.cpp"
-    "GP2Shader.cpp" "GP2CommandPool.cpp" "GP2CommandBuffer.cpp" "GP2Mesh.h" "GP2DataBuffer.cpp" "GP2DescriptorPool.cpp" )
+    "GP2CommandBuffer.cpp"
+    "GP2CommandPool.cpp"
+    "GP2DataBuffer.cpp"
+    "GP2Mesh.h"
+    "GP2DescriptorPool.cpp"
+    "GP2Shader.cpp"
+    "Vertexes.cpp")
 
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${GLSL_SOURCE_FILES}  "vulkanbase/VulkanUtil.cpp")
