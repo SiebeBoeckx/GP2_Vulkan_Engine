@@ -1,5 +1,6 @@
 #pragma once
 #include "vulkan/vulkan_core.h"
+#include <vector>
 
 class GP2CommandBuffer
 {
@@ -18,7 +19,7 @@ public:
 	}
 
 	void reset()const;
-	void beginRecording()const;
+	void beginRecording(const VkRenderPass& renderPass, const std::vector<VkFramebuffer>& swapChainFramebuffers, int imageIdx, const VkExtent2D& swapChainExtent)const;
 	void endRecording()const;
 	
 	void submit(VkSubmitInfo & info)const;

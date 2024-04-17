@@ -8,13 +8,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
 #include <chrono>
-#include "GP2Mesh.h"
+#include "Vertexes.h"
+#include "vulkanbase/VulkanUtil.h"
 
 struct UniformBufferObject {
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 proj;
 };
+
+template <VertexConcept V>
+class GP2Mesh;
 
 //template <VertexConcept V>
 class GP2DataBuffer
@@ -223,7 +227,6 @@ public:
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 	
-		UniformBufferObject ubo{};
 		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 		ubo.proj = glm::perspective(glm::radians(45.0f), WIDTH / static_cast<float>(HEIGHT), 0.1f, 10.0f);
@@ -233,7 +236,15 @@ public:
 	}
 
 	const std::vector<GP2DataBuffer*>& GetUniformBufferInfos() const { return uniformBufferInfos; }
+	const UniformBufferObject& GetUBO() { return ubo; };
+	UniformBufferObject& GetWritableUBO() { return ubo; };
+	void SetUBO(UniformBufferObject newUbo) { ubo = newUbo; };
+
+	std::vector<void*>& GetWritableMappedUniformBuffers() { return uniformBuffersMapped; }
+
 private:
 	std::vector<GP2DataBuffer*> uniformBufferInfos{};
 	std::vector<void*> uniformBuffersMapped{};
+	UniformBufferObject ubo{};
+	std::chrono::steady_clock::time_point startTime{};
 };

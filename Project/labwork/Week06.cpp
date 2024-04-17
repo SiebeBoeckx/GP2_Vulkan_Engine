@@ -44,12 +44,14 @@ void VulkanBase::drawFrame() {
 	vkAcquireNextImageKHR(device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
 
 	commandBuffer.reset();
-	commandBuffer.beginRecording();
+	commandBuffer.beginRecording(renderPass, swapChainFramebuffers, imageIndex, swapChainExtent);
 
-	recordCommandBuffer(imageIndex);
+	pipeline3D.Record(commandBuffer, imageIndex, swapChainExtent);
+	//recordCommandBuffer(imageIndex);
 	commandBuffer.endRecording();
 
-	uniformBuffer.Update(imageIndex);
+	//ubo.Update(imageIndex);
+	pipeline3D.Update(imageIndex);
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

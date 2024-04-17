@@ -38,18 +38,17 @@ protected:
 	std::vector<VkPipelineShaderStageCreateInfo> m_ShaderStages{};
 };
 
-class GP2Shader3D : public GP2Shader
-{
-public:
-	GP2Shader3D(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
-		:GP2Shader(vertexShaderFile, fragmentShaderFile)
-	{
-	}
-
-	void CreateDescriptorSetLayout(const VkDevice& vkDevice);
-	const VkDescriptorSetLayout& GetDescriptorSetLayout() const { return m_DescriptorSetLayout; }
-
-	void Cleanup(const VkDevice& vkDevice);
-private:
-	VkDescriptorSetLayout m_DescriptorSetLayout{nullptr};
-};
+//class GP2Shader3D : public GP2Shader
+//{
+//public:
+//	GP2Shader3D(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
+//		:GP2Shader(vertexShaderFile, fragmentShaderFile)
+//	{
+//	}
+//
+//	//const VkDescriptorSetLayout& GetDescriptorSetLayout() const { return m_DescriptorSetLayout; }
+//
+//	//void Cleanup(const VkDevice& vkDevice);
+//private:
+//	//VkDescriptorSetLayout m_DescriptorSetLayout{nullptr};
+//};

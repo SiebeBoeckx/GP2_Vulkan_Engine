@@ -17,12 +17,13 @@
 #include <set>
 #include <limits>
 #include <algorithm>
-#include "GP2Shader.h"
-#include "GP2CommandPool.h"
-//#include "GP2Mesh.h"
+//#include "GP2Shader.h"
+//#include "GP2CommandPool.h"
+#include "GP2Mesh.h"
 //#include "GP2DataBuffer.h"
 //#include "Vertexes.h"
-#include "GP2DescriptorPool.h"
+//#include "GP2DescriptorPool.h"
+#include "Scene.h"
 
 const std::vector<const char*> validationLayers = {
 	"VK_LAYER_KHRONOS_validation"
@@ -64,25 +65,33 @@ private:
 		
 		// week 03
 		//m_GradientShader.Initialize(device);
-		m_3DShader.Initialize(device);
-		m_3DShader.CreateDescriptorSetLayout(device);
+		//m_3DShader.Initialize(device);
+		//m_3DShader.CreateDescriptorSetLayout(device);
 		createRenderPass();
+		//CreateDescriptorSetLayout(device);
 		//createGraphicsPipeline();
-		createGraphicsPipeline3D();
+		//createGraphicsPipeline3D();
 		createFrameBuffers();
 
 		// week 02
 		commandPool.Initialize(device, findQueueFamilies(physicalDevice));
-		vertexBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
-		vertexBuffer.CreateBuffer(mesh);
-		indexBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
-		indexBuffer.CreateBuffer(mesh);
-		uniformBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
-		uniformBuffer.CreateBuffer(mesh);
-		descriptorPool.Initialize(device);
-		descriptorPool.CreateDescriptorSets(m_3DShader.GetDescriptorSetLayout(), uniformBuffer);
+		//vertexBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
+		//vertexBuffer.CreateBuffer(mesh);
+		//indexBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
+		//indexBuffer.CreateBuffer(mesh);
+		//uniformBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
+		//uniformBuffer.CreateBuffer(mesh);
+		//descriptorPool.Initialize(device);
+		//descriptorPool.CreateDescriptorSets(m_DescriptorSetLayout, uniformBuffer);
 
 		commandBuffer = commandPool.createCommandBuffer();
+
+		Scene scene{ commandPool, graphicsQueue };
+		//3D pipeline
+		
+		pipeline3D.Initialize(device, physicalDevice, renderPass);
+		scene.Create3DScene(pipeline3D);
+		
 		// week 06
 		createSyncObjects();
 	}
@@ -100,21 +109,26 @@ private:
 		vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
 		vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
 		vkDestroyFence(device, inFlightFence, nullptr);
+		pipeline3D.Cleanup();
 
-		vertexBuffer.Cleanup();
-		indexBuffer.Cleanup();
-		uniformBuffer.Cleanup();
+		//vertexBuffer.Cleanup();
+		//indexBuffer.Cleanup();
+		//uniformBuffer.Cleanup();
+		//
+		//descriptorPool.Destroy();
 
-		descriptorPool.Destroy();
+
 		commandPool.Destroy();
 		for (auto framebuffer : swapChainFramebuffers) {
 			vkDestroyFramebuffer(device, framebuffer, nullptr);
 		}
 
-		vkDestroyPipeline(device, graphicsPipeline, nullptr);
-		vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+		//vkDestroyPipeline(device, graphicsPipeline, nullptr);
+		//vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
 
-		m_3DShader.Cleanup(device);
+		//m_3DShader.Cleanup(device);
+
+		//vkDestroyDescriptorSetLayout(device, m_DescriptorSetLayout, nullptr);
 
 		vkDestroyRenderPass(device, renderPass, nullptr);
 
@@ -145,15 +159,15 @@ private:
 		}
 	}
 
-	GP2Shader m_GradientShader{
-		"shaders/shader.vert.spv",
-		"shaders/shader.frag.spv" 
-	};
+	//GP2Shader m_GradientShader{
+	//	"shaders/shader.vert.spv",
+	//	"shaders/shader.frag.spv" 
+	//};
 
-	GP2Shader3D m_3DShader{
-		"shaders/shader3D.vert.spv",
-		"shaders/shader.frag.spv"
-	};
+	//GP2Shader m_3DShader{
+	//	"shaders/shader3D.vert.spv",
+	//	"shaders/shader.frag.spv"
+	//};
 
 	// Week 01: 
 	// Actual window
@@ -164,8 +178,8 @@ private:
 	GLFWwindow* window;
 	void initWindow();
 
-	void drawScene();
-	void drawScene3D(uint32_t imageIndex);
+	//void drawScene();
+	//void drawScene3D(uint32_t imageIndex);
 
 	// Week 02
 	// Queue families
@@ -179,28 +193,32 @@ private:
 	//
 	//GP2Mesh<glm::vec2> mesh{ vertices, indices };
 
-	std::vector<Vertex3D> vertices{ Vertex3D{glm::vec3{-0.5f, -0.5f, 0.f}, glm::vec3{1.f, 0.f, 0.f}},
-									Vertex3D{glm::vec3{0.5f, -0.5f, 0.f}, glm::vec3{0.f, 1.f, 0.f}},
-									Vertex3D{glm::vec3{0.5f, 0.5f, 0.f}, glm::vec3{0.f, 0.f, 1.f}},
-									Vertex3D{glm::vec3{-0.5f, 0.5f, 0.f}, glm::vec3{1.f, 1.f, 1.f}} };
-
-	std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
-
-	GP2Mesh<Vertex3D> mesh{ vertices, indices };
-
+	//std::vector<Vertex3D> vertices{ Vertex3D{glm::vec3{-0.5f, -0.5f, 0.f}, glm::vec3{1.f, 0.f, 0.f}},
+	//								Vertex3D{glm::vec3{0.5f, -0.5f, 0.f}, glm::vec3{0.f, 1.f, 0.f}},
+	//								Vertex3D{glm::vec3{0.5f, 0.5f, 0.f}, glm::vec3{0.f, 0.f, 1.f}},
+	//								Vertex3D{glm::vec3{-0.5f, 0.5f, 0.f}, glm::vec3{1.f, 1.f, 1.f}} };
+	//
+	//std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
+	//
+	//GP2Mesh<Vertex3D> mesh{ vertices, indices };
+	//
 	GP2CommandPool commandPool;
 	GP2CommandBuffer commandBuffer;
-	GP2VertexBuffer<Vertex3D> vertexBuffer;
-	GP2IndexBuffer<Vertex3D> indexBuffer;
-	GP2UniformBuffer<Vertex3D> uniformBuffer;
-	GP2DescriptorPool descriptorPool;
+
+	GP2GraphicsPipeline<Vertex3D> pipeline3D{ "shaders/shader3D.vert.spv", "shaders/shader.frag.spv" };
+	//GP2VertexBuffer<Vertex3D> vertexBuffer;
+	//GP2IndexBuffer<Vertex3D> indexBuffer;
+	//GP2UniformBuffer<Vertex3D> uniformBuffer;
+	//GP2DescriptorPool descriptorPool;
+	//VkDescriptorSetLayout m_DescriptorSetLayout;
 
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
-	void drawFrame(uint32_t imageIndex);
+	//void drawFrame(uint32_t imageIndex);
 	//void createCommandBuffer();
 	//void createCommandPool(); 
-	void recordCommandBuffer(uint32_t imageIndex);
+	//void recordCommandBuffer(uint32_t imageIndex);
+	//void CreateDescriptorSetLayout(const VkDevice& vkDevice);
 
 	//void CreateVertexBuffer();
 	
@@ -209,14 +227,15 @@ private:
 	// Graphics pipeline
 	
 	std::vector<VkFramebuffer> swapChainFramebuffers;
-	VkPipelineLayout pipelineLayout;
-	VkPipeline graphicsPipeline;
+	//VkPipelineLayout pipelineLayout;
+	//VkPipeline graphicsPipeline;
 	VkRenderPass renderPass;
 
 	void createFrameBuffers();
 	void createRenderPass();
-	void createGraphicsPipeline();
-	void createGraphicsPipeline3D();
+	//void createGraphicsPipeline();
+	//void createGraphicsPipeline3D();
+
 
 	// Week 04
 	// Swap chain and image view support
