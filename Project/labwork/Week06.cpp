@@ -46,11 +46,13 @@ void VulkanBase::drawFrame() {
 	commandBuffer.reset();
 	commandBuffer.beginRecording(renderPass, swapChainFramebuffers, imageIndex, swapChainExtent);
 
+	pipeline2D.Record(commandBuffer, imageIndex, swapChainExtent);
 	pipeline3D.Record(commandBuffer, imageIndex, swapChainExtent);
 	//recordCommandBuffer(imageIndex);
 	commandBuffer.endRecording();
 
 	//ubo.Update(imageIndex);
+	//pipeline2D.Update(imageIndex);
 	pipeline3D.Update(imageIndex);
 
 	VkSubmitInfo submitInfo{};

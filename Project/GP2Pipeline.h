@@ -61,20 +61,6 @@ inline void GP2GraphicsPipeline<V>::Record(GP2CommandBuffer& buffer, int imageId
 {
 	vkCmdBindPipeline(buffer.GetVkCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_Pipeline);
 
-	VkViewport viewport{};
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.width = (float)swapChainExtent.width;
-	viewport.height = (float)swapChainExtent.height;
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-	vkCmdSetViewport(buffer.GetVkCommandBuffer(), 0, 1, &viewport);
-
-	VkRect2D scissor{};
-	scissor.offset = { 0, 0 };
-	scissor.extent = swapChainExtent;
-	vkCmdSetScissor(buffer.GetVkCommandBuffer(), 0, 1, &scissor);
-
 	DrawScene(buffer, imageIdx);
 }
 
@@ -83,22 +69,6 @@ inline void GP2GraphicsPipeline<V>::Update(uint32_t imageIdx)
 {
 	for (int i{}; i < m_pMeshes.size(); ++i)
 	{
-		//static auto startTime = std::chrono::high_resolution_clock::now();
-		//
-		//auto currentTime = std::chrono::high_resolution_clock::now();
-		//float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-		//
-		////UniformBufferObject ubo = m_pMeshes[i]->GetWriteAbleUniformBuffer().GetWritableUBO();
-		//
-		//m_Ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		//m_Ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		//m_Ubo.proj = glm::perspective(glm::radians(45.0f), WIDTH / static_cast<float>(HEIGHT), 0.1f, 10.0f);
-		//m_Ubo.proj[1][1] *= -1;
-		//
-		//void* mappedLocation = m_pMeshes[i]->GetWriteAbleUniformBuffer().GetWritableMappedUniformBuffers()[imageIdx];
-		//
-		//memcpy(mappedLocation, &m_Ubo, sizeof(m_Ubo));
-
 		m_pMeshes[i].GetWriteAbleUniformBuffer().Update(imageIdx);
 	}
 }
@@ -124,9 +94,9 @@ inline void GP2GraphicsPipeline<V>::DrawScene(GP2CommandBuffer& buffer, int imag
 {
 	for (int i{}; i < m_pMeshes.size(); ++i)
 	{
-		VkBuffer vertexBuffers[] = { m_pMeshes[i].GetVertexBuffer().GetBuffer() };
-		VkBuffer indexBuffers = { m_pMeshes[i].GetIndexBuffer().GetBuffer() };
-		VkDeviceSize offsets[] = { 0 };
+		VkBuffer vertexBuffers[]{ m_pMeshes[i].GetVertexBuffer().GetBuffer() };
+		VkBuffer indexBuffers{ m_pMeshes[i].GetIndexBuffer().GetBuffer() };
+		VkDeviceSize offsets[]{ 0 };
 		vkCmdBindVertexBuffers(buffer.GetVkCommandBuffer(), 0, 1, vertexBuffers, offsets);
 
 		vkCmdBindIndexBuffer(buffer.GetVkCommandBuffer(), indexBuffers, 0, VK_INDEX_TYPE_UINT16);

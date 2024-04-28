@@ -71,6 +71,9 @@ private:
 		//CreateDescriptorSetLayout(device);
 		//createGraphicsPipeline();
 		//createGraphicsPipeline3D();
+		
+		//createDepthResources();
+
 		createFrameBuffers();
 
 		// week 02
@@ -89,7 +92,9 @@ private:
 		Scene scene{ commandPool, graphicsQueue };
 		//3D pipeline
 		
+		pipeline2D.Initialize(device, physicalDevice, renderPass);
 		pipeline3D.Initialize(device, physicalDevice, renderPass);
+		scene.Create2DScene(pipeline2D);
 		scene.Create3DScene(pipeline3D);
 		
 		// week 06
@@ -109,6 +114,7 @@ private:
 		vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
 		vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
 		vkDestroyFence(device, inFlightFence, nullptr);
+		pipeline2D.Cleanup();
 		pipeline3D.Cleanup();
 
 		//vertexBuffer.Cleanup();
@@ -205,6 +211,7 @@ private:
 	GP2CommandPool commandPool;
 	GP2CommandBuffer commandBuffer;
 
+	GP2GraphicsPipeline<Vertex> pipeline2D{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
 	GP2GraphicsPipeline<Vertex3D> pipeline3D{ "shaders/shader3D.vert.spv", "shaders/shader.frag.spv" };
 	//GP2VertexBuffer<Vertex3D> vertexBuffer;
 	//GP2IndexBuffer<Vertex3D> indexBuffer;
@@ -235,7 +242,9 @@ private:
 	void createRenderPass();
 	//void createGraphicsPipeline();
 	//void createGraphicsPipeline3D();
-
+	//void createDepthResources();
+	//VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	//VkFormat findDepthFormat();
 
 	// Week 04
 	// Swap chain and image view support

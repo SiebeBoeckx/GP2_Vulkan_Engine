@@ -22,7 +22,9 @@ public:
 	void Cleanup();
 
 	const std::vector<V>& GetVertices() const { return m_Vertices; }
+	std::vector<V> GetVerticesCopy() { return m_Vertices; }
 	const std::vector<uint16_t>& GetIndices() const { return m_Indices; }
+	std::vector<uint16_t> GetIndicesCopy() { return m_Indices; }
 	const GP2VertexBuffer<V>& GetVertexBuffer() const { return m_VertexBuffer; }
 	const GP2IndexBuffer<V> GetIndexBuffer() const { return m_IndexBuffer; }
 	const GP2UniformBuffer<V>& GetUniformBuffer() const { return m_UniformBuffer; }
