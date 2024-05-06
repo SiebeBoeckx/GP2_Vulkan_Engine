@@ -1,3 +1,4 @@
+#pragma once
 #include "vulkanbase/VulkanBase.h"
 
 void VulkanBase::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo) {
@@ -52,8 +53,9 @@ void VulkanBase::drawFrame() {
 	commandBuffer.endRecording();
 
 	//ubo.Update(imageIndex);
+	m_Camera.Update(window, m_DragStart);
 	//pipeline2D.Update(imageIndex);
-	pipeline3D.Update(imageIndex);
+	pipeline3D.Update(imageIndex, m_Camera.CalculateCameraToWorld());
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

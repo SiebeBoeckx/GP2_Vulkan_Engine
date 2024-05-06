@@ -1,3 +1,4 @@
+#pragma once
 #include "vulkanbase/VulkanBase.h"
 
 SwapChainSupportDetails VulkanBase::querySwapChainSupport(VkPhysicalDevice device) {

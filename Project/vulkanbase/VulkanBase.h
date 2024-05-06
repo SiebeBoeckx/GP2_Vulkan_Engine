@@ -19,11 +19,13 @@
 #include <algorithm>
 //#include "GP2Shader.h"
 //#include "GP2CommandPool.h"
-#include "GP2Mesh.h"
+//#include "GP2Mesh.h"
 //#include "GP2DataBuffer.h"
 //#include "Vertexes.h"
 //#include "GP2DescriptorPool.h"
 #include "Scene.h"
+//#include "Utils.h"
+#include "Camera.h"
 
 const std::vector<const char*> validationLayers = {
 	"VK_LAYER_KHRONOS_validation"
@@ -183,6 +185,13 @@ private:
 
 	GLFWwindow* window;
 	void initWindow();
+
+	void keyEvent(int key, int scancode, int action, int mods);
+	
+	Camera m_Camera{};
+
+	glm::vec2 m_Rotation{};
+	glm::vec2 m_DragStart{};
 
 	//void drawScene();
 	//void drawScene3D(uint32_t imageIndex);

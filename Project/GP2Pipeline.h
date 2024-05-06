@@ -18,7 +18,7 @@ public:
 	VkPipelineInputAssemblyStateCreateInfo CreateInputAssemblyStateInfo() { return m_Shader.CreateInputAssemblyStateInfo(); };
 	void Cleanup();
 	void Record(GP2CommandBuffer& buffer, int imageIdx, const VkExtent2D& swapChainExtent);
-	void Update(uint32_t imageIdx);
+	void Update(uint32_t imageIdx, const glm::mat4& cameraToWorld);
 	void AddMesh(GP2Mesh<V>& mesh, const GP2CommandPool& commandPool, const VkQueue queue);
 	void SetUBO(UniformBufferObject ubo);
 private:
@@ -65,11 +65,11 @@ inline void GP2GraphicsPipeline<V>::Record(GP2CommandBuffer& buffer, int imageId
 }
 
 template<VertexConcept V>
-inline void GP2GraphicsPipeline<V>::Update(uint32_t imageIdx)
+inline void GP2GraphicsPipeline<V>::Update(uint32_t imageIdx, const glm::mat4& cameraToWorld)
 {
 	for (int i{}; i < m_pMeshes.size(); ++i)
 	{
-		m_pMeshes[i].GetWriteAbleUniformBuffer().Update(imageIdx);
+		m_pMeshes[i].GetWriteAbleUniformBuffer().Update(imageIdx, cameraToWorld);
 	}
 }
 
@@ -99,7 +99,7 @@ inline void GP2GraphicsPipeline<V>::DrawScene(GP2CommandBuffer& buffer, int imag
 		VkDeviceSize offsets[]{ 0 };
 		vkCmdBindVertexBuffers(buffer.GetVkCommandBuffer(), 0, 1, vertexBuffers, offsets);
 
-		vkCmdBindIndexBuffer(buffer.GetVkCommandBuffer(), indexBuffers, 0, VK_INDEX_TYPE_UINT16);
+		vkCmdBindIndexBuffer(buffer.GetVkCommandBuffer(), indexBuffers, 0, VK_INDEX_TYPE_UINT32);
 
 		vkCmdBindDescriptorSets(buffer.GetVkCommandBuffer()
 			, VK_PIPELINE_BIND_POINT_GRAPHICS

@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include <algorithm>
 #include <iostream>
+#include "Utils.h"
 
 void Scene::Create2DScene(GP2GraphicsPipeline<Vertex>& pipeline)
 {
@@ -47,29 +48,30 @@ void Scene::Create3DScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
 								Vertex3D{glm::vec3{0.5f, -0.5f, 0.f}, glm::vec3{0.f, 1.f, 0.f}},
 								Vertex3D{glm::vec3{0.5f, 0.5f, 0.f}, glm::vec3{0.f, 0.f, 1.f}},
 								Vertex3D{glm::vec3{-0.5f, 0.5f, 0.f}, glm::vec3{1.f, 1.f, 1.f}} };
-
-	std::vector<uint16_t> indices{ 0, 1, 2, 2, 3, 0 };
-
+	std::vector<uint32_t> indices{ 0, 1, 2, 2, 3, 0 };
 	GP2Mesh<Vertex3D> mesh{ vertices, indices };
-
 	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue);
 
 	std::vector<Vertex3D> vertices2{ Vertex3D{glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{1.f, 1.f, 1.f}},
 								Vertex3D{glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{1.f, 1.f, 1.f}},
 								Vertex3D{glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{1.f, 1.f, 1.f}},
 								Vertex3D{glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{1.f, 1.f, 1.f}} };
-
-	std::vector<uint16_t> indices2{ 0, 1, 2, 2, 3, 0 };
-
+	std::vector<uint32_t> indices2{ 0, 1, 2, 2, 3, 0 };
 	GP2Mesh<Vertex3D> mesh2{ vertices2, indices2 };
-
 	pipeline.AddMesh(mesh2, m_CommandPool, m_GraphicsQueue);
+
+	std::vector<Vertex3D> vertices3{};
+	std::vector<uint32_t> indices3{};
+	std::string filename{ "resources/viking_room.obj" };
+	LoadModel(filename, vertices3, indices3);
+	GP2Mesh<Vertex3D> mesh3{ vertices3, indices3 };
+	pipeline.AddMesh(mesh3, m_CommandPool, m_GraphicsQueue);
 }
 
 GP2Mesh<Vertex> Scene::CreateRectangle(glm::vec2 center, float width, float height, const glm::vec3& color)
 {
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{ 0, 2, 1, 2, 0, 3 };
+	std::vector<uint32_t> indices{ 0, 2, 1, 2, 0, 3 };
 
 	vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, color });
 	vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, color });
@@ -87,7 +89,7 @@ GP2Mesh<Vertex> Scene::CreateRectangle(glm::vec2 center, float width, float heig
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{ 0, 2, 1, 2, 0, 3 };
+	std::vector<uint32_t> indices{ 0, 2, 1, 2, 0, 3 };
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -120,7 +122,7 @@ GP2Mesh<Vertex> Scene::CreateRectangleV2(glm::vec2 center, float width, float he
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{ 0, 3, 2, 1, 2, 3 };
+	std::vector<uint32_t> indices{ 0, 3, 2, 1, 2, 3 };
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -153,7 +155,7 @@ GP2Mesh<Vertex> Scene::CreateRectangleV3(glm::vec2 center, float width, float he
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{ 0, 2, 1, 1, 2, 3 };
+	std::vector<uint32_t> indices{ 0, 2, 1, 1, 2, 3 };
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -186,7 +188,7 @@ GP2Mesh<Vertex> Scene::CreateRectangleV4(glm::vec2 center, float width, float he
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{ 0, 1, 2, 2, 1, 3 };
+	std::vector<uint32_t> indices{ 0, 1, 2, 2, 1, 3 };
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -219,7 +221,7 @@ GP2Mesh<Vertex> Scene::CreateRectangleV5(glm::vec2 center, float width, float he
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{ 0, 3, 2, 1, 2, 3 };
+	std::vector<uint32_t> indices{ 0, 3, 2, 1, 2, 3 };
 
 	for (int i{}; i < 4; ++i)
 	{
@@ -247,7 +249,7 @@ GP2Mesh<Vertex> Scene::CreateRectangleV5(glm::vec2 center, float width, float he
 GP2Mesh<Vertex> Scene::CreateEllipse(glm::vec2 center, float width, float height, const glm::vec3& color, int nrOfVertexes)
 {
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{};
+	std::vector<uint32_t> indices{};
 
 	vertexes.push_back({ center, color });
 
@@ -291,7 +293,7 @@ GP2Mesh<Vertex> Scene::CreateEllipse(glm::vec2 center, float width, float height
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{};
+	std::vector<uint32_t> indices{};
 
 	vertexes.push_back({ center, colors[0]});
 	// Calculate angle increment
@@ -328,13 +330,13 @@ GP2Mesh<Vertex> Scene::CreateEllipse(glm::vec2 center, float width, float height
 GP2Mesh<Vertex> Scene::CreateRoundedRectangle(glm::vec2 center, float width, float height, float cornerRadius, const glm::vec3& color, int numPoints)
 {
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{};
+	std::vector<uint32_t> indices{};
 
 	//Center rectangle
 	GP2Mesh<Vertex> centerRectangle{ CreateRectangle(center, width - cornerRadius * 2, height - cornerRadius * 2, color) };
 	std::vector<Vertex> importVertexes = centerRectangle.GetVerticesCopy();
-	std::vector<uint16_t> importindices = centerRectangle.GetIndicesCopy();
-	uint16_t existingVertexSize = static_cast<uint16_t>(vertexes.size());
+	std::vector<uint32_t> importindices = centerRectangle.GetIndicesCopy();
+	uint32_t existingVertexSize = static_cast<uint16_t>(vertexes.size());
 
 	std::for_each(importVertexes.begin(), importVertexes.end(), [&](const Vertex& v) {vertexes.push_back(v); });
 	std::for_each(importindices.begin(), importindices.end(), [&](const uint16_t& i) {indices.push_back(i + existingVertexSize); });
@@ -432,7 +434,7 @@ GP2Mesh<Vertex> Scene::CreateRoundedRectangle(glm::vec2 center, float width, flo
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{ 1, 0, 2, 2, 0, 3, 3, 0, 4, 4, 0, 1 };
+	std::vector<uint32_t> indices{ 1, 0, 2, 2, 0, 3, 3, 0, 4, 4, 0, 1 };
 
 	vertexes.push_back({ center, colors[0] });
 
@@ -445,8 +447,8 @@ GP2Mesh<Vertex> Scene::CreateRoundedRectangle(glm::vec2 center, float width, flo
 	glm::vec2 topRectangleCenter{ center.x, center.y - (height / 2) + (cornerRadius / 2) };
 	GP2Mesh<Vertex> topRectangle{ CreateRectangle(topRectangleCenter, width - cornerRadius * 2, cornerRadius, colors[1])};
 	std::vector<Vertex> importVertexes = topRectangle.GetVerticesCopy();
-	std::vector<uint16_t> importindices = topRectangle.GetIndicesCopy();
-	uint16_t existingVertexSize = static_cast<uint16_t>(vertexes.size());
+	std::vector<uint32_t> importindices = topRectangle.GetIndicesCopy();
+	uint32_t existingVertexSize = static_cast<uint16_t>(vertexes.size());
 
 	std::for_each(importVertexes.begin(), importVertexes.end(), [&](const Vertex& v) {vertexes.push_back(v); });
 	std::for_each(importindices.begin(), importindices.end(), [&](const uint16_t& i) {indices.push_back(i + existingVertexSize); });
@@ -534,13 +536,13 @@ GP2Mesh<Vertex> Scene::CreateRoundedRectangleV2(glm::vec2 center, float width, f
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{};
+	std::vector<uint32_t> indices{};
 
 	//Center rectangle
 	GP2Mesh<Vertex> centerRectangle{ CreateRectangle(center, width - cornerRadius * 2, height - cornerRadius * 2, colors[0]) };
 	std::vector<Vertex> importVertexes = centerRectangle.GetVerticesCopy();
-	std::vector<uint16_t> importindices = centerRectangle.GetIndicesCopy();
-	uint16_t existingVertexSize = static_cast<uint16_t>(vertexes.size());
+	std::vector<uint32_t> importindices = centerRectangle.GetIndicesCopy();
+	uint32_t existingVertexSize = static_cast<uint16_t>(vertexes.size());
 
 	std::for_each(importVertexes.begin(), importVertexes.end(), [&](const Vertex& v) {vertexes.push_back(v); });
 	std::for_each(importindices.begin(), importindices.end(), [&](const uint16_t& i) {indices.push_back(i + existingVertexSize); });
@@ -638,13 +640,13 @@ GP2Mesh<Vertex> Scene::CreateRoundedRectangleBorder(glm::vec2 center, float widt
 	}
 
 	std::vector<Vertex> vertexes{};
-	std::vector<uint16_t> indices{};
+	std::vector<uint32_t> indices{};
 
 	//Center rectangle
 	GP2Mesh<Vertex> centerRectangle{ CreateRectangle(center, width - cornerRadius * 2, height - cornerRadius * 2, colors[0])};
 	std::vector<Vertex> importVertexes = centerRectangle.GetVerticesCopy();
-	std::vector<uint16_t> importindices = centerRectangle.GetIndicesCopy();
-	uint16_t existingVertexSize = static_cast<uint16_t>(vertexes.size());
+	std::vector<uint32_t> importindices = centerRectangle.GetIndicesCopy();
+	uint32_t existingVertexSize = static_cast<uint16_t>(vertexes.size());
 
 	std::for_each(importVertexes.begin(), importVertexes.end(), [&](const Vertex& v) {vertexes.push_back(v); });
 	std::for_each(importindices.begin(), importindices.end(), [&](const uint16_t& i) {indices.push_back(i + existingVertexSize); });
@@ -735,7 +737,7 @@ GP2Mesh<Vertex> Scene::CreateRoundedRectangleBorder(glm::vec2 center, float widt
 GP2Mesh<Vertex> Scene::GenerateCorner(const glm::vec2& center, float radius, int numPoints, const glm::vec3& color, float initialRotation)
 {
 	std::vector<Vertex> vertexes;
-	std::vector<uint16_t> indices;
+	std::vector<uint32_t> indices;
 
 	vertexes.push_back({ center, color });
 
@@ -773,7 +775,7 @@ GP2Mesh<Vertex> Scene::GenerateCorner(const glm::vec2& center, float radius, int
 GP2Mesh<Vertex> Scene::GenerateCornerV2(const glm::vec2& center, float radius, int numPoints, const std::vector<glm::vec3>& colors, float initialRotation)
 {
 	std::vector<Vertex> vertexes;
-	std::vector<uint16_t> indices;
+	std::vector<uint32_t> indices;
 
 	vertexes.push_back({ center, colors[0]});
 

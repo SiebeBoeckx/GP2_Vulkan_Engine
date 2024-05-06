@@ -13,7 +13,7 @@ template <VertexConcept V>
 class GP2Mesh
 {
 public:
-	GP2Mesh(std::vector<V> verticeVector, std::vector<uint16_t> indiceVector) : m_Vertices(verticeVector), m_Indices(indiceVector)
+	GP2Mesh(std::vector<V> verticeVector, std::vector<uint32_t> indiceVector) : m_Vertices(verticeVector), m_Indices(indiceVector)
 	{
 
 	}
@@ -23,8 +23,8 @@ public:
 
 	const std::vector<V>& GetVertices() const { return m_Vertices; }
 	std::vector<V> GetVerticesCopy() { return m_Vertices; }
-	const std::vector<uint16_t>& GetIndices() const { return m_Indices; }
-	std::vector<uint16_t> GetIndicesCopy() { return m_Indices; }
+	const std::vector<uint32_t>& GetIndices() const { return m_Indices; }
+	std::vector<uint32_t> GetIndicesCopy() { return m_Indices; }
 	const GP2VertexBuffer<V>& GetVertexBuffer() const { return m_VertexBuffer; }
 	const GP2IndexBuffer<V> GetIndexBuffer() const { return m_IndexBuffer; }
 	const GP2UniformBuffer<V>& GetUniformBuffer() const { return m_UniformBuffer; }
@@ -34,7 +34,7 @@ public:
 private:
 	const std::vector<V> m_Vertices{};
 
-	const std::vector<uint16_t> m_Indices{};
+	const std::vector<uint32_t> m_Indices{};
 
 	GP2VertexBuffer<V> m_VertexBuffer;
 	GP2IndexBuffer<V> m_IndexBuffer;

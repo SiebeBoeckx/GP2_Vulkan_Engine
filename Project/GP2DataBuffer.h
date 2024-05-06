@@ -220,7 +220,7 @@ public:
 		}
 	}
 
-	void Update(uint32_t currentImage)
+	void Update(uint32_t currentImage, const glm::mat4& cameraToWorld)
 	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 	
@@ -228,7 +228,7 @@ public:
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 	
 		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.view = glm::lookAt(glm::vec3(cameraToWorld[3]), glm::vec3(cameraToWorld[3]) + glm::vec3(cameraToWorld[2]), glm::vec3(cameraToWorld[1]));
 		ubo.proj = glm::perspective(glm::radians(45.0f), WIDTH / static_cast<float>(HEIGHT), 0.1f, 10.0f);
 		ubo.proj[1][1] *= -1;
 

@@ -1,3 +1,4 @@
+#pragma once
 #include "vulkanbase/VulkanBase.h"
 
 void VulkanBase::pickPhysicalDevice() {

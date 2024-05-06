@@ -1,3 +1,4 @@
+#pragma once
 #include "vulkanbase/VulkanBase.h"
 
 //void VulkanBase::recordCommandBuffer(uint32_t imageIndex)
