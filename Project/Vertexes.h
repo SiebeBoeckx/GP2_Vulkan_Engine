@@ -6,12 +6,13 @@
 template<typename T>
 concept VertexConcept = requires {
 	{ T::GetBindingDescription() } -> std::same_as<VkVertexInputBindingDescription>;
-	{ T::GetAttributeDescriptions() } -> std::same_as<std::array<VkVertexInputAttributeDescription, 2>>;
+	{ T::GetAttributeDescriptions() } -> std::same_as<std::array<VkVertexInputAttributeDescription, 3>>;
 };
 
 struct Vertex {
 	glm::vec2 pos;
 	glm::vec3 color;
+	glm::vec2 texCoord;
 
 	static VkVertexInputBindingDescription GetBindingDescription() {
 		VkVertexInputBindingDescription bindingDescription{};
@@ -24,9 +25,9 @@ struct Vertex {
 		return bindingDescription;
 	}
 
-	static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions() //https://vulkan-tutorial.com/Vertex_buffers/Vertex_input_description
+	static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() //https://vulkan-tutorial.com/Vertex_buffers/Vertex_input_description
 	{
-		std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
 		attributeDescriptions[0].binding = 0;
 		attributeDescriptions[0].location = 0;
@@ -38,6 +39,11 @@ struct Vertex {
 		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[1].offset = offsetof(Vertex, color);
 
+		attributeDescriptions[2].binding = 0;
+		attributeDescriptions[2].location = 2;
+		attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
+
 		return attributeDescriptions;
 	}
 };
@@ -45,6 +51,7 @@ struct Vertex {
 struct Vertex3D {
 	glm::vec3 pos;
 	glm::vec3 color;
+	glm::vec2 texCoord;
 
 	static VkVertexInputBindingDescription GetBindingDescription() {
 		VkVertexInputBindingDescription bindingDescription{};
@@ -57,9 +64,9 @@ struct Vertex3D {
 		return bindingDescription;
 	}
 
-	static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions() //https://vulkan-tutorial.com/Vertex_buffers/Vertex_input_description
+	static std::array<VkVertexInputAttributeDescription, 3> GetAttributeDescriptions() //https://vulkan-tutorial.com/Vertex_buffers/Vertex_input_description
 	{
-		std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
 		attributeDescriptions[0].binding = 0;
 		attributeDescriptions[0].location = 0;
@@ -70,6 +77,11 @@ struct Vertex3D {
 		attributeDescriptions[1].location = 1;
 		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 		attributeDescriptions[1].offset = offsetof(Vertex3D, color);
+
+		attributeDescriptions[2].binding = 0;
+		attributeDescriptions[2].location = 2;
+		attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+		attributeDescriptions[2].offset = offsetof(Vertex3D, texCoord);
 
 		return attributeDescriptions;
 	}
