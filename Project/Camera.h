@@ -158,7 +158,7 @@ struct Camera
         if (mouseState == GLFW_PRESS) //right mouse
         {
             //update members
-            totalYaw -= changeX * rotationSpeed;
+            totalYaw += changeX * rotationSpeed;
             totalPitch += changeY * rotationSpeed;
 
             // Clamp pitch to avoid flipping
@@ -169,11 +169,12 @@ struct Camera
 
             glm::vec3 newFront;
             newFront.x = cos(glm::radians(totalYaw)) * cos(glm::radians(totalPitch));
-            newFront.y = sin(glm::radians(totalPitch));
-            newFront.z = sin(glm::radians(totalYaw)) * cos(glm::radians(totalPitch));
-            forward = glm::normalize(newFront);
+            newFront.y = sin(glm::radians(totalYaw)) * cos(glm::radians(totalPitch));
+            newFront.z = sin(glm::radians(totalPitch));
+            forward = newFront;
+            //forward = glm::normalize(newFront);
 
-            right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+            right = glm::normalize(glm::cross(forward, glm::vec3(0.0f, 0.0f, 1.0f)));
             up = glm::normalize(glm::cross(right, forward));
 
             oldMousePos.x = static_cast<float>(mouseX);
@@ -185,8 +186,9 @@ struct Camera
             oldMousePos.y = 0;
         }
 
-        std::cout << "Origin: " << origin.x << ", " << origin.y << ", " << origin.z << '\n';
-        std::cout << "Forward: " << forward.x << ", " << forward.y << ", " << forward.z << '\n';
+        //std::cout << "Origin: " << origin.x << ", " << origin.y << ", " << origin.z << '\n';
+        //std::cout << "Forward: " << forward.x << ", " << forward.y << ", " << forward.z << '\n';
+        std::cout << "Right: " << right.x << ", " << right.y << ", " << right.z << '\n';
     }
 };
 
