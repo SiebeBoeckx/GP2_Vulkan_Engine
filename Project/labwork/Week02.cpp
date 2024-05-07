@@ -1,5 +1,7 @@
 #pragma once
 #include "vulkanbase/VulkanBase.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "libraries/stb_image.h"
 
 //void VulkanBase::recordCommandBuffer(uint32_t imageIndex)
 //{

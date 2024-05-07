@@ -51,6 +51,7 @@ static bool ParseOBJ(const std::string& filename, std::vector<Vertex3D>& positio
     return true;
 }
 
+template <VertexConcept V>
 void LoadModel(const std::string& filename, std::vector<Vertex3D>& positions, std::vector<uint32_t>& indices)
 {
     tinyobj::attrib_t attrib;
@@ -66,14 +67,14 @@ void LoadModel(const std::string& filename, std::vector<Vertex3D>& positions, st
     {
         for (const auto& index : shape.mesh.indices)
         {
-            Vertex3D vertex{};
+            V vertex{};
 
             vertex.pos = {  attrib.vertices[3 * index.vertex_index + 0],
                             attrib.vertices[3 * index.vertex_index + 1],
                             attrib.vertices[3 * index.vertex_index + 2]};
 
-            vertex.texCoord = {  attrib.texcoords[2 * index.texcoord_index + 0],
-                                 attrib.texcoords[2 * index.texcoord_index + 1]};
+            vertex.texCoord = { attrib.texcoords[2 * index.texcoord_index + 0],
+                                attrib.texcoords[2 * index.texcoord_index + 1] };
             
             vertex.color = { 1.f, 1.f, 1.f };
 

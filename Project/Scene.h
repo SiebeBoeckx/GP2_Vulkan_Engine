@@ -12,6 +12,7 @@ public:
 
 	void Create3DScene(GP2GraphicsPipeline<Vertex3D>& pipeline);
 	void Create2DScene(GP2GraphicsPipeline<Vertex>& pipeline);
+	void Create3DTexScene(GP2GraphicsPipeline<Vertex3D>& pipeline);
 private:
 	GP2Mesh<Vertex> CreateRectangle(glm::vec2 center, float width, float height, const glm::vec3& color = {1.f, 1.f, 1.f});
 	GP2Mesh<Vertex> CreateRectangle(glm::vec2 center, float width, float height, const std::vector<glm::vec3>& colors);

@@ -33,13 +33,7 @@ public:
 	const VkDeviceMemory& GetBufferMemory() const { return m_VkBufferMemory; }
 	const VkDeviceSize& GetSize() const { return m_Size; }
 
-private:
-	VkDevice m_VkDevice;
-	VkDeviceSize m_Size;
-	VkBuffer m_VkBuffer;
-	VkDeviceMemory m_VkBufferMemory;
-
-	uint32_t FindMemoryType(VkPhysicalDevice physDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties)
+	static uint32_t FindMemoryType(VkPhysicalDevice physDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties)
 	{
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(physDevice, &memProperties);
@@ -53,6 +47,12 @@ private:
 		}
 		return 0;
 	}
+private:
+	VkDevice m_VkDevice;
+	VkDeviceSize m_Size;
+	VkBuffer m_VkBuffer;
+	VkDeviceMemory m_VkBufferMemory;
+
 };
 
 template <VertexConcept V>

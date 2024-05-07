@@ -196,6 +196,7 @@ struct Camera
         //std::cout << "Forward: " << forward.x << ", " << forward.y << ", " << forward.z << '\n';
         //std::cout << "Right: " << right.x << ", " << right.y << ", " << right.z << '\n';
         //std::cout << "Yaw: " << totalYaw << ", " << "Pitch: " << totalPitch << '\n';
+        std::cout << "DeltaT: " << deltaT << '\n';
         firstUpdate = false;
     }
 };

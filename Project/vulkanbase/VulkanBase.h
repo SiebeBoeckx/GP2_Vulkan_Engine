@@ -98,6 +98,7 @@ private:
 		pipeline3D.Initialize(device, physicalDevice, renderPass);
 		scene.Create2DScene(pipeline2D);
 		scene.Create3DScene(pipeline3D);
+		scene.Create3DTexScene(pipeline3D);
 		
 		// week 06
 		createSyncObjects();
@@ -189,8 +190,6 @@ private:
 	void keyEvent(int key, int scancode, int action, int mods);
 	
 	Camera m_Camera{};
-
-	glm::vec2 m_Rotation{};
 	glm::vec2 m_DragStart{};
 
 	//void drawScene();

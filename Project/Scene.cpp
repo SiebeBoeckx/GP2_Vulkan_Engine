@@ -63,9 +63,29 @@ void Scene::Create3DScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
 	std::vector<Vertex3D> vertices3{};
 	std::vector<uint32_t> indices3{};
 	std::string filename{ "resources/viking_room.obj" };
-	LoadModel(filename, vertices3, indices3);
+	LoadModel<Vertex3D>(filename, vertices3, indices3);
 	GP2Mesh<Vertex3D> mesh3{ vertices3, indices3 };
 	pipeline.AddMesh(mesh3, m_CommandPool, m_GraphicsQueue);
+}
+
+void Scene::Create3DTexScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
+{
+	std::vector<Vertex3D> vertices{		Vertex3D{glm::vec3{-0.5f, -0.5f, -1.5f}, glm::vec3{1.f, 0.f, 0.f}},
+										Vertex3D{glm::vec3{0.5f, -0.5f, -1.5f}, glm::vec3{0.f, 1.f, 0.f}},
+										Vertex3D{glm::vec3{0.5f, 0.5f, -1.5f}, glm::vec3{0.f, 0.f, 1.f}},
+										Vertex3D{glm::vec3{-0.5f, 0.5f, -1.5f}, glm::vec3{1.f, 1.f, 1.f}} };
+	std::vector<uint32_t> indices{ 0, 1, 2, 2, 3, 0 };
+	GP2Mesh<Vertex3D> mesh{ vertices, indices };
+	mesh.SetTextureImage(pipeline.CreateTextureImage("resources/texture.jpg", m_CommandPool, m_GraphicsQueue));
+	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue);
+
+
+	//std::vector<Vertex3D> vertices3{};
+	//std::vector<uint32_t> indices3{};
+	//std::string filename{ "resources/viking_room.obj" };
+	//LoadModel<Vertex3D>(filename, vertices3, indices3);
+	//GP2Mesh<Vertex3D> mesh3{ vertices3, indices3 };
+	//pipeline.AddMesh(mesh3, m_CommandPool, m_GraphicsQueue);
 }
 
 GP2Mesh<Vertex> Scene::CreateRectangle(glm::vec2 center, float width, float height, const glm::vec3& color)

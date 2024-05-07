@@ -31,7 +31,15 @@ public:
 	GP2UniformBuffer<V>& GetWriteAbleUniformBuffer() { return m_UniformBuffer; }
 	const GP2DescriptorPool& GetDescriptorPool() const { return m_DescriptorPool; }
 
+	void SetTextureImage(std::pair<VkImage, VkDeviceMemory> imagePair)
+	{
+		m_TextureImage = imagePair.first;
+		m_TextureImageMemory = imagePair.second;
+	}
+
 private:
+	VkDevice m_Device{ VK_NULL_HANDLE };
+
 	const std::vector<V> m_Vertices{};
 
 	const std::vector<uint32_t> m_Indices{};
@@ -40,11 +48,16 @@ private:
 	GP2IndexBuffer<V> m_IndexBuffer;
 	GP2UniformBuffer<V> m_UniformBuffer;
 	GP2DescriptorPool m_DescriptorPool{};
+
+	VkImage m_TextureImage;
+	VkDeviceMemory m_TextureImageMemory;
 };
 
 template<VertexConcept V>
 inline void GP2Mesh<V>::Initialize(const VkDevice& device, const VkPhysicalDevice& physDevice, const VkCommandPool commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout)
 {
+	m_Device = device;
+
 	m_VertexBuffer.Initialize(device, physDevice, commandPool, graphicsQueue);
 	m_VertexBuffer.CreateBuffer(*this);
 	m_IndexBuffer.Initialize(device, physDevice, commandPool, graphicsQueue);
@@ -62,4 +75,7 @@ inline void GP2Mesh<V>::Cleanup()
 	m_IndexBuffer.Cleanup();
 	m_UniformBuffer.Cleanup();
 	m_DescriptorPool.Destroy();
+
+	//vkDestroyImage(m_Device, m_TextureImage, nullptr);
+	//vkFreeMemory(m_Device,m_TextureImageMemory, nullptr);
 }
