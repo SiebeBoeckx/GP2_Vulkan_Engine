@@ -63,13 +63,13 @@ struct Camera
     glm::vec3 right{ 1.f, 0.f, 0.f };
 
     float totalPitch{ 0.f };
-    float totalYaw{ 0.f };
+    float totalYaw{ 90.f };
 
     glm::mat4 cameraToWorld{};
 
     std::chrono::steady_clock::time_point startTime{};
     glm::vec2 oldMousePos{0,0};
-    bool firstUpdate{ false };
+    bool firstUpdate{ true };
     float deltaT{};
 
     glm::mat4 CalculateCameraToWorld()
@@ -143,14 +143,19 @@ struct Camera
         int mouseState = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
         glfwGetCursorPos(window, &mouseX, &mouseY);
 
+        float changeX{ 0.f };
+        float changeY{ 0.f };
+
         if (oldMousePos.x == 0 && oldMousePos.y == 0)
         {
             oldMousePos.x = static_cast<float>(mouseX);
             oldMousePos.y = static_cast<float>(mouseY);
         }
-
-        const float changeX{ static_cast<float>(mouseX) - oldMousePos.x };
-        const float changeY{ static_cast<float>(mouseY) - oldMousePos.y };
+        else
+        {
+            changeX = static_cast<float>(mouseX) - oldMousePos.x;
+            changeY = static_cast<float>(mouseY) - oldMousePos.y;
+        }
 
         //implement rotation
         glm::mat4 rotationMatrix{};
@@ -184,11 +189,14 @@ struct Camera
         {
             oldMousePos.x = 0;
             oldMousePos.y = 0;
+            return;
         }
 
         //std::cout << "Origin: " << origin.x << ", " << origin.y << ", " << origin.z << '\n';
         //std::cout << "Forward: " << forward.x << ", " << forward.y << ", " << forward.z << '\n';
-        std::cout << "Right: " << right.x << ", " << right.y << ", " << right.z << '\n';
+        //std::cout << "Right: " << right.x << ", " << right.y << ", " << right.z << '\n';
+        std::cout << "Yaw: " << totalYaw << ", " << "Pitch: " << totalPitch << '\n';
+        firstUpdate = false;
     }
 };
 
