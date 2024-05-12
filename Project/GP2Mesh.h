@@ -49,8 +49,8 @@ private:
 	GP2UniformBuffer<V> m_UniformBuffer;
 	GP2DescriptorPool m_DescriptorPool{};
 
-	VkImage m_TextureImage;
-	VkDeviceMemory m_TextureImageMemory;
+	VkImage m_TextureImage{ VK_NULL_HANDLE };
+	VkDeviceMemory m_TextureImageMemory{ VK_NULL_HANDLE };
 };
 
 template<VertexConcept V>
@@ -76,6 +76,7 @@ inline void GP2Mesh<V>::Cleanup()
 	m_UniformBuffer.Cleanup();
 	m_DescriptorPool.Destroy();
 
-	//vkDestroyImage(m_Device, m_TextureImage, nullptr);
-	//vkFreeMemory(m_Device,m_TextureImageMemory, nullptr);
+	vkDestroyImage(m_Device, m_TextureImage, nullptr);
+	vkFreeMemory(m_Device,m_TextureImageMemory, nullptr);
+
 }
