@@ -44,41 +44,43 @@ void Scene::Create2DScene(GP2GraphicsPipeline<Vertex>& pipeline)
 
 void Scene::Create3DScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
 {
-	std::vector<Vertex3D> vertices{ Vertex3D{glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{1.f, 0.f, 0.f}},
-								Vertex3D{glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.f, 1.f, 0.f}},
-								Vertex3D{glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{0.f, 0.f, 1.f}},
-								Vertex3D{glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{1.f, 1.f, 1.f}} };
+	std::vector<Vertex3D> vertices{ Vertex3D{glm::vec3{-0.5f, -0.5f, -0.5f}, glm::vec3{1.f, 0.f, 0.f}, glm::vec2{-1.f, -1.f}},
+								Vertex3D{glm::vec3{0.5f, -0.5f, -0.5f}, glm::vec3{0.f, 1.f, 0.f}, glm::vec2{-1.f, -1.f}},
+								Vertex3D{glm::vec3{0.5f, 0.5f, -0.5f}, glm::vec3{0.f, 0.f, 1.f}, glm::vec2{-1.f, -1.f}},
+								Vertex3D{glm::vec3{-0.5f, 0.5f, -0.5f}, glm::vec3{1.f, 1.f, 1.f}, glm::vec2{-1.f, -1.f}} };
 	std::vector<uint32_t> indices{ 0, 1, 2, 2, 3, 0 };
 	GP2Mesh<Vertex3D> mesh{ vertices, indices };
 	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue);
 
-	std::vector<Vertex3D> vertices2{ Vertex3D{glm::vec3{-0.5f, -0.5f, -1.0f}, glm::vec3{1.f, 1.f, 1.f}},
-								Vertex3D{glm::vec3{0.5f, -0.5f, -1.0f}, glm::vec3{1.f, 1.f, 1.f}},
-								Vertex3D{glm::vec3{0.5f, 0.5f, -1.0f}, glm::vec3{1.f, 1.f, 1.f}},
-								Vertex3D{glm::vec3{-0.5f, 0.5f, -1.0f}, glm::vec3{1.f, 1.f, 1.f}} };
+	std::vector<Vertex3D> vertices2{ Vertex3D{glm::vec3{-0.5f, -0.5f, -1.0f}, glm::vec3{1.f, 1.f, 1.f}, glm::vec2{-1.f, -1.f}},
+								Vertex3D{glm::vec3{0.5f, -0.5f, -1.0f}, glm::vec3{1.f, 1.f, 1.f}, glm::vec2{-1.f, -1.f}},
+								Vertex3D{glm::vec3{0.5f, 0.5f, -1.0f}, glm::vec3{1.f, 1.f, 1.f}, glm::vec2{-1.f, -1.f}},
+								Vertex3D{glm::vec3{-0.5f, 0.5f, -1.0f}, glm::vec3{1.f, 1.f, 1.f}, glm::vec2{-1.f, -1.f}} };
 	std::vector<uint32_t> indices2{ 0, 1, 2, 2, 3, 0 };
 	GP2Mesh<Vertex3D> mesh2{ vertices2, indices2 };
 	pipeline.AddMesh(mesh2, m_CommandPool, m_GraphicsQueue);
 
-	std::vector<Vertex3D> vertices3{};
-	std::vector<uint32_t> indices3{};
-	std::string filename{ "resources/viking_room.obj" };
-	LoadModel<Vertex3D>(filename, vertices3, indices3);
-	GP2Mesh<Vertex3D> mesh3{ vertices3, indices3 };
-	pipeline.AddMesh(mesh3, m_CommandPool, m_GraphicsQueue);
+	
 }
 
 void Scene::Create3DTexScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
 {
-	std::vector<Vertex3D> vertices{		Vertex3D{glm::vec3{-0.5f, -0.5f, -1.5f}, glm::vec3{1.f, 0.f, 0.f}},
-										Vertex3D{glm::vec3{0.5f, -0.5f, -1.5f}, glm::vec3{0.f, 1.f, 0.f}},
-										Vertex3D{glm::vec3{0.5f, 0.5f, -1.5f}, glm::vec3{0.f, 0.f, 1.f}},
-										Vertex3D{glm::vec3{-0.5f, 0.5f, -1.5f}, glm::vec3{1.f, 1.f, 1.f}} };
+	std::vector<Vertex3D> vertices{ Vertex3D{glm::vec3{-0.5f, -0.5f, -1.5f}, glm::vec3{1.f, 0.f, 1.f}, glm::vec2{1.f, 0.f}},
+										Vertex3D{glm::vec3{0.5f, -0.5f, -1.5f}, glm::vec3{1.f, 0.f, 1.f}, glm::vec2{0.f, 0.f}},
+										Vertex3D{glm::vec3{0.5f, 0.5f, -1.5f}, glm::vec3{1.f, 0.f, 1.f}, glm::vec2{0.f, 1.f}},
+										Vertex3D{glm::vec3{-0.5f, 0.5f, -1.5f}, glm::vec3{1.f, 0.f, 1.f}, glm::vec2{1.f, 1.f}} };
 	std::vector<uint32_t> indices{ 0, 1, 2, 2, 3, 0 };
 	GP2Mesh<Vertex3D> mesh{ vertices, indices };
-	mesh.SetTextureImage(pipeline.CreateTextureImage("resources/texture.jpg", m_CommandPool, m_GraphicsQueue));
+	mesh.SetTextureImage(pipeline.GetDevice(), pipeline.GetPhysDevice(), pipeline.CreateTextureImage("resources/texture.jpg", m_CommandPool, m_GraphicsQueue));
 	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue);
 
+	std::vector<Vertex3D> vertices2{};
+	std::vector<uint32_t> indices2{};
+	std::string filename{ "resources/viking_room.obj" };
+	LoadModelTex<Vertex3D>(filename, vertices2, indices2);
+	GP2Mesh<Vertex3D> mesh2{ vertices2, indices2 };
+	mesh2.SetTextureImage(pipeline.GetDevice(), pipeline.GetPhysDevice(), pipeline.CreateTextureImage("resources/viking_room.png", m_CommandPool, m_GraphicsQueue));
+	pipeline.AddMesh(mesh2, m_CommandPool, m_GraphicsQueue);
 
 	//std::vector<Vertex3D> vertices3{};
 	//std::vector<uint32_t> indices3{};
@@ -93,10 +95,10 @@ GP2Mesh<Vertex> Scene::CreateRectangle(glm::vec2 center, float width, float heig
 	std::vector<Vertex> vertexes{};
 	std::vector<uint32_t> indices{ 0, 2, 1, 2, 0, 3 };
 
-	vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, color });
-	vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, color });
-	vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, color });
-	vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, color });
+	vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, color, glm::vec2{-1.f, -1.f} });
+	vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, color, glm::vec2{-1.f, -1.f} });
+	vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, color, glm::vec2{-1.f, -1.f} });
+	vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, color, glm::vec2{-1.f, -1.f} });
 
 	return GP2Mesh<Vertex>{vertexes, indices};
 }
@@ -117,16 +119,16 @@ GP2Mesh<Vertex> Scene::CreateRectangle(glm::vec2 center, float width, float heig
 		switch (i)
 		{
 		case 0:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 1:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 2:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 3:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		}		
 	}
@@ -150,16 +152,16 @@ GP2Mesh<Vertex> Scene::CreateRectangleV2(glm::vec2 center, float width, float he
 		switch (i)
 		{
 		case 0:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 1:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 2:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 3:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		}
 	}
@@ -183,16 +185,16 @@ GP2Mesh<Vertex> Scene::CreateRectangleV3(glm::vec2 center, float width, float he
 		switch (i)
 		{
 		case 0:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 1:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 2:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 3:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		}
 	}
@@ -216,16 +218,16 @@ GP2Mesh<Vertex> Scene::CreateRectangleV4(glm::vec2 center, float width, float he
 		switch (i)
 		{
 		case 0:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 1:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 2:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 3:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		}
 	}
@@ -249,16 +251,16 @@ GP2Mesh<Vertex> Scene::CreateRectangleV5(glm::vec2 center, float width, float he
 		switch (i)
 		{
 		case 0:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 1:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 2:
-			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x - width / 2, center.y + height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		case 3:
-			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx] });
+			vertexes.push_back(Vertex{ {center.x + width / 2, center.y - height / 2}, colors[idx], glm::vec2{-1.f, -1.f} });
 			break;
 		}
 	}
@@ -282,7 +284,7 @@ GP2Mesh<Vertex> Scene::CreateEllipse(glm::vec2 center, float width, float height
 		float angle = i * angleIncrement;
 		float x = center.x + width * 0.5f * std::cos(angle);
 		float y = center.y + height * 0.5f * std::sin(angle);
-		vertexes.push_back({ glm::vec2(x, y), color });
+		vertexes.push_back({ glm::vec2(x, y), color, glm::vec2{-1.f, -1.f} });
 	}
 
 	for (int i = 0; i < nrOfVertexes; ++i)
@@ -325,7 +327,7 @@ GP2Mesh<Vertex> Scene::CreateEllipse(glm::vec2 center, float width, float height
 		float angle = i * angleIncrement;
 		float x = center.x + width * 0.5f * std::cos(angle);
 		float y = center.y + height * 0.5f * std::sin(angle);
-		vertexes.push_back({ glm::vec2(x, y), colors[1]});
+		vertexes.push_back({ glm::vec2(x, y), colors[1], glm::vec2{-1.f, -1.f} });
 	}
 
 	for (int i = 0; i < nrOfVertexes; ++i)
@@ -458,10 +460,10 @@ GP2Mesh<Vertex> Scene::CreateRoundedRectangle(glm::vec2 center, float width, flo
 
 	vertexes.push_back({ center, colors[0] });
 
-	vertexes.push_back(Vertex{ {center.x - (width - cornerRadius * 2) / 2, center.y - (height - cornerRadius * 2) / 2}, colors[1] });
-	vertexes.push_back(Vertex{ {center.x + (width - cornerRadius * 2) / 2, center.y - (height - cornerRadius * 2) / 2}, colors[1] });
-	vertexes.push_back(Vertex{ {center.x + (width - cornerRadius * 2) / 2, center.y + (height - cornerRadius * 2) / 2}, colors[1] });
-	vertexes.push_back(Vertex{ {center.x - (width - cornerRadius * 2) / 2, center.y + (height - cornerRadius * 2) / 2}, colors[1] });
+	vertexes.push_back(Vertex{ {center.x - (width - cornerRadius * 2) / 2, center.y - (height - cornerRadius * 2) / 2}, colors[1], glm::vec2{-1.f, -1.f} });
+	vertexes.push_back(Vertex{ {center.x + (width - cornerRadius * 2) / 2, center.y - (height - cornerRadius * 2) / 2}, colors[1], glm::vec2{-1.f, -1.f} });
+	vertexes.push_back(Vertex{ {center.x + (width - cornerRadius * 2) / 2, center.y + (height - cornerRadius * 2) / 2}, colors[1], glm::vec2{-1.f, -1.f} });
+	vertexes.push_back(Vertex{ {center.x - (width - cornerRadius * 2) / 2, center.y + (height - cornerRadius * 2) / 2}, colors[1], glm::vec2{-1.f, -1.f} });
 
 	//Top rectangle
 	glm::vec2 topRectangleCenter{ center.x, center.y - (height / 2) + (cornerRadius / 2) };
@@ -770,7 +772,7 @@ GP2Mesh<Vertex> Scene::GenerateCorner(const glm::vec2& center, float radius, int
 		float angle = i * angleIncrement + initialRotation;
 		float x = center.x + radius * 0.5f * std::cos(angle);
 		float y = center.y + radius * 0.5f * std::sin(angle);
-		vertexes.push_back({ glm::vec2(x, y), color });
+		vertexes.push_back({ glm::vec2(x, y), color, glm::vec2{-1.f, -1.f} });
 	}
 
 	for (int i = 0; i < numPoints; ++i)
@@ -808,7 +810,7 @@ GP2Mesh<Vertex> Scene::GenerateCornerV2(const glm::vec2& center, float radius, i
 		float angle = i * angleIncrement + initialRotation;
 		float x = center.x + radius * 0.5f * std::cos(angle);
 		float y = center.y + radius * 0.5f * std::sin(angle);
-		vertexes.push_back({ glm::vec2(x, y), colors[1] });
+		vertexes.push_back({ glm::vec2(x, y), colors[1], glm::vec2{-1.f, -1.f} });
 	}
 
 	for (int i = 0; i < numPoints; ++i)

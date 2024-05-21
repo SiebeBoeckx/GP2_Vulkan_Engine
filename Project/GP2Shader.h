@@ -8,7 +8,7 @@
 class GP2Shader
 {
 public:
-	GP2Shader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile) 	
+	GP2Shader(const std::string& vertexShaderFile, const std::string& fragmentShaderFile)
 	:m_VertextShaderFile(vertexShaderFile)
 	,m_FragmentShaderFile(fragmentShaderFile)
 	{

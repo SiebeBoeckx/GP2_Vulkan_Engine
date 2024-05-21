@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
-#include "VulkanUtil.h"
+//#include "VulkanUtil.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -73,13 +73,14 @@ private:
 		//CreateDescriptorSetLayout(device);
 		//createGraphicsPipeline();
 		//createGraphicsPipeline3D();
+		commandPool.Initialize(device, findQueueFamilies(physicalDevice));
+		commandBuffer = commandPool.createCommandBuffer();
 		
-		//createDepthResources();
+		createDepthResources();
 
 		createFrameBuffers();
 
 		// week 02
-		commandPool.Initialize(device, findQueueFamilies(physicalDevice));
 		//vertexBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
 		//vertexBuffer.CreateBuffer(mesh);
 		//indexBuffer.Initialize(device, physicalDevice, commandPool.GetCommandPool(), graphicsQueue);
@@ -89,16 +90,16 @@ private:
 		//descriptorPool.Initialize(device);
 		//descriptorPool.CreateDescriptorSets(m_DescriptorSetLayout, uniformBuffer);
 
-		commandBuffer = commandPool.createCommandBuffer();
 
 		Scene scene{ commandPool, graphicsQueue };
 		//3D pipeline
 		
 		pipeline2D.Initialize(device, physicalDevice, renderPass);
 		pipeline3D.Initialize(device, physicalDevice, renderPass);
+		pipeline3DTex.Initialize(device, physicalDevice, renderPass);
 		scene.Create2DScene(pipeline2D);
 		scene.Create3DScene(pipeline3D);
-		scene.Create3DTexScene(pipeline3D);
+		scene.Create3DTexScene(pipeline3DTex);
 		
 		// week 06
 		createSyncObjects();
@@ -119,6 +120,11 @@ private:
 		vkDestroyFence(device, inFlightFence, nullptr);
 		pipeline2D.Cleanup();
 		pipeline3D.Cleanup();
+		pipeline3DTex.Cleanup();
+
+		vkDestroyImageView(device, depthImageView, nullptr);
+		vkDestroyImage(device, depthImage, nullptr);
+		vkFreeMemory(device, depthImageMemory, nullptr);
 
 		//vertexBuffer.Cleanup();
 		//indexBuffer.Cleanup();
@@ -221,6 +227,7 @@ private:
 
 	GP2GraphicsPipeline<Vertex> pipeline2D{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
 	GP2GraphicsPipeline<Vertex3D> pipeline3D{ "shaders/shader3D.vert.spv", "shaders/shader.frag.spv" };
+	GP2GraphicsPipeline<Vertex3D> pipeline3DTex{ "shaders/shader3D.vert.spv", "shaders/shaderTex.frag.spv" };
 	//GP2VertexBuffer<Vertex3D> vertexBuffer;
 	//GP2IndexBuffer<Vertex3D> indexBuffer;
 	//GP2UniformBuffer<Vertex3D> uniformBuffer;
@@ -250,9 +257,15 @@ private:
 	void createRenderPass();
 	//void createGraphicsPipeline();
 	//void createGraphicsPipeline3D();
-	//void createDepthResources();
-	//VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
-	//VkFormat findDepthFormat();
+
+	//DEPTH BUFFER
+	VkImage depthImage;
+	VkDeviceMemory depthImageMemory;
+	VkImageView depthImageView;
+
+	void createDepthResources();
+	VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	VkFormat findDepthFormat();
 
 	// Week 04
 	// Swap chain and image view support
@@ -270,6 +283,7 @@ private:
 	VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 	void createSwapChain();
 	void createImageViews();
+	
 
 	// Week 05 
 	// Logical and physical device

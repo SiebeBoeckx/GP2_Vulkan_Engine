@@ -3,7 +3,8 @@
 #include <vector>
 #include <stdexcept>
 #include <memory>
-#include "vulkanbase/VulkanUtil.h"
+#include <iostream>
+//#include "vulkanbase/VulkanUtil.h"
 #include "GP2DescriptorPool.h"
 
 //if changing, change where it's set for CMAKE!!!
@@ -31,11 +32,7 @@ public:
 	GP2UniformBuffer<V>& GetWriteAbleUniformBuffer() { return m_UniformBuffer; }
 	const GP2DescriptorPool& GetDescriptorPool() const { return m_DescriptorPool; }
 
-	void SetTextureImage(std::pair<VkImage, VkDeviceMemory> imagePair)
-	{
-		m_TextureImage = imagePair.first;
-		m_TextureImageMemory = imagePair.second;
-	}
+	void SetTextureImage(const VkDevice& device, const VkPhysicalDevice& physDevice, const std::pair<VkImage, VkDeviceMemory>& imagePair);
 
 private:
 	VkDevice m_Device{ VK_NULL_HANDLE };
@@ -49,8 +46,13 @@ private:
 	GP2UniformBuffer<V> m_UniformBuffer;
 	GP2DescriptorPool m_DescriptorPool{};
 
-	VkImage m_TextureImage{ VK_NULL_HANDLE };
-	VkDeviceMemory m_TextureImageMemory{ VK_NULL_HANDLE };
+	VkImage m_TextureImage{ nullptr };
+	VkDeviceMemory m_TextureImageMemory{ nullptr };
+	VkImageView m_TextureImageView{ nullptr };
+	VkSampler m_TextureSampler{ nullptr };
+	bool m_UsingTexture{ false };
+	
+	void CreateTextureSampler(const VkDevice& device, const VkPhysicalDevice& physDevice);
 };
 
 template<VertexConcept V>
@@ -64,8 +66,16 @@ inline void GP2Mesh<V>::Initialize(const VkDevice& device, const VkPhysicalDevic
 	m_IndexBuffer.CreateBuffer(*this);
 	m_UniformBuffer.Initialize(device, physDevice, commandPool, graphicsQueue);
 	m_UniformBuffer.CreateBuffer(*this);
-	m_DescriptorPool.Initialize(device);
-	m_DescriptorPool.CreateDescriptorSets(descriptorSetLayout, m_UniformBuffer);
+	//if (m_UsingTexture)
+	//{
+		m_DescriptorPool.InitializeTexture(device);
+		m_DescriptorPool.CreateDescriptorSetsTextures(descriptorSetLayout, m_UniformBuffer, m_TextureImageView, m_TextureSampler);
+	//}
+	//else
+	//{
+	//	m_DescriptorPool.Initialize(device);
+	//	m_DescriptorPool.CreateDescriptorSets(descriptorSetLayout, m_UniformBuffer);
+	//}
 }
 
 template<VertexConcept V>
@@ -76,7 +86,51 @@ inline void GP2Mesh<V>::Cleanup()
 	m_UniformBuffer.Cleanup();
 	m_DescriptorPool.Destroy();
 
-	vkDestroyImage(m_Device, m_TextureImage, nullptr);
-	vkFreeMemory(m_Device,m_TextureImageMemory, nullptr);
+	vkDestroySampler(m_Device, m_TextureSampler, nullptr);
+	vkDestroyImageView(m_Device, m_TextureImageView, nullptr);
 
+	vkFreeMemory(m_Device,m_TextureImageMemory, nullptr);
+	vkDestroyImage(m_Device, m_TextureImage, nullptr);
+}
+
+template<VertexConcept V>
+inline void GP2Mesh<V>::SetTextureImage(const VkDevice& device, const VkPhysicalDevice& physDevice, const std::pair<VkImage, VkDeviceMemory>& imagePair)
+{
+	m_TextureImage = imagePair.first;
+	m_TextureImageMemory = imagePair.second;
+
+	m_TextureImageView = CreateImageView(device, m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+	CreateTextureSampler(device, physDevice);
+
+	m_UsingTexture = true;
+}
+
+template<VertexConcept V>
+inline void GP2Mesh<V>::CreateTextureSampler(const VkDevice& device, const VkPhysicalDevice& physDevice)
+{
+	VkPhysicalDeviceProperties properties{};
+	vkGetPhysicalDeviceProperties(physDevice, &properties);
+
+	VkSamplerCreateInfo samplerInfo{};
+	samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter = VK_FILTER_LINEAR;
+	samplerInfo.minFilter = VK_FILTER_LINEAR;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.anisotropyEnable = VK_TRUE;
+	samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+	samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+	samplerInfo.unnormalizedCoordinates = VK_FALSE;
+	samplerInfo.compareEnable = VK_FALSE;
+	samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+	/*samplerInfo.mipLodBias = 0.0f;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = 0.0f;*/
+
+	if (vkCreateSampler(device, &samplerInfo, nullptr, &m_TextureSampler) != VK_SUCCESS) {
+		throw std::runtime_error("failed to create texture sampler!");
+	}
 }

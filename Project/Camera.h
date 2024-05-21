@@ -1,7 +1,7 @@
 #pragma once
 //#include <glm/glm.hpp>
 #include <chrono>
-#include <GP2Pipeline.h>
+#include "GP2Pipeline.h"
 
 constexpr auto TO_DEGREES = (180.0f / 3.141f);
 constexpr auto TO_RADIANS(3.141f / 180.0f);
@@ -196,7 +196,7 @@ struct Camera
         //std::cout << "Forward: " << forward.x << ", " << forward.y << ", " << forward.z << '\n';
         //std::cout << "Right: " << right.x << ", " << right.y << ", " << right.z << '\n';
         //std::cout << "Yaw: " << totalYaw << ", " << "Pitch: " << totalPitch << '\n';
-        std::cout << "DeltaT: " << deltaT << '\n';
+        //std::cout << "DeltaT: " << deltaT << '\n';
         firstUpdate = false;
     }
 };
