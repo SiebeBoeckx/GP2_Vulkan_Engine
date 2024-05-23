@@ -97,9 +97,11 @@ private:
 		pipeline2D.Initialize(device, physicalDevice, renderPass);
 		pipeline3D.Initialize(device, physicalDevice, renderPass);
 		pipeline3DTex.Initialize(device, physicalDevice, renderPass);
+		pipeline3DPBR.Initialize(device, physicalDevice, renderPass);
 		scene.Create2DScene(pipeline2D);
 		scene.Create3DScene(pipeline3D);
 		scene.Create3DTexScene(pipeline3DTex);
+		scene.CreatePBRScene(pipeline3DPBR);
 		
 		// week 06
 		createSyncObjects();
@@ -121,6 +123,7 @@ private:
 		pipeline2D.Cleanup();
 		pipeline3D.Cleanup();
 		pipeline3DTex.Cleanup();
+		pipeline3DPBR.Cleanup();
 
 		vkDestroyImageView(device, depthImageView, nullptr);
 		vkDestroyImage(device, depthImage, nullptr);
@@ -228,6 +231,7 @@ private:
 	GP2GraphicsPipeline<Vertex> pipeline2D{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
 	GP2GraphicsPipeline<Vertex3D> pipeline3D{ "shaders/shader3D.vert.spv", "shaders/shader.frag.spv" };
 	GP2GraphicsPipeline<Vertex3D> pipeline3DTex{ "shaders/shader3D.vert.spv", "shaders/shaderTex.frag.spv" };
+	GP2GraphicsPipeline<VertexPBR> pipeline3DPBR{ "shaders/shader3DPBR.vert.spv", "shaders/shaderPBR.frag.spv" };
 	//GP2VertexBuffer<Vertex3D> vertexBuffer;
 	//GP2IndexBuffer<Vertex3D> indexBuffer;
 	//GP2UniformBuffer<Vertex3D> uniformBuffer;

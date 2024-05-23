@@ -74,13 +74,13 @@ void Scene::Create3DTexScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
 	mesh.SetTextureImage(pipeline.GetDevice(), pipeline.GetPhysDevice(), pipeline.CreateTextureImage("resources/texture.jpg", m_CommandPool, m_GraphicsQueue));
 	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue);
 
-	std::vector<Vertex3D> vertices2{};
-	std::vector<uint32_t> indices2{};
-	std::string filename{ "resources/viking_room.obj" };
-	LoadModelTex<Vertex3D>(filename, vertices2, indices2);
-	GP2Mesh<Vertex3D> mesh2{ vertices2, indices2 };
-	mesh2.SetTextureImage(pipeline.GetDevice(), pipeline.GetPhysDevice(), pipeline.CreateTextureImage("resources/viking_room.png", m_CommandPool, m_GraphicsQueue));
-	pipeline.AddMesh(mesh2, m_CommandPool, m_GraphicsQueue);
+	//std::vector<Vertex3D> vertices2{};
+	//std::vector<uint32_t> indices2{};
+	//std::string filename{ "resources/viking_room.obj" };
+	//LoadModelTex<Vertex3D>(filename, vertices2, indices2);
+	//GP2Mesh<Vertex3D> mesh2{ vertices2, indices2 };
+	//mesh2.SetTextureImage(pipeline.GetDevice(), pipeline.GetPhysDevice(), pipeline.CreateTextureImage("resources/viking_room.png", m_CommandPool, m_GraphicsQueue));
+	//pipeline.AddMesh(mesh2, m_CommandPool, m_GraphicsQueue);
 
 	//std::vector<Vertex3D> vertices3{};
 	//std::vector<uint32_t> indices3{};
@@ -88,6 +88,22 @@ void Scene::Create3DTexScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
 	//LoadModel<Vertex3D>(filename, vertices3, indices3);
 	//GP2Mesh<Vertex3D> mesh3{ vertices3, indices3 };
 	//pipeline.AddMesh(mesh3, m_CommandPool, m_GraphicsQueue);
+}
+
+void Scene::CreatePBRScene(GP2GraphicsPipeline<VertexPBR>& pipeline)
+{
+	std::vector<VertexPBR> vertices{};
+	std::vector<uint32_t> indices{};
+	std::string filename{ "resources/vehicle.obj" };
+	LoadModelPBR<VertexPBR>(filename, vertices, indices);
+	GP2Mesh<VertexPBR> mesh{ vertices, indices };
+	mesh.SetTextureImage(pipeline.GetDevice(), pipeline.GetPhysDevice(), pipeline.CreateTextureImage("resources/vehicle_diffuse.png", m_CommandPool, m_GraphicsQueue));
+	std::pair<VkImage, VkDeviceMemory> normalMap{ pipeline.CreateTextureImage("resources/vehicle_normal.png", m_CommandPool, m_GraphicsQueue) };
+	std::pair<VkImage, VkDeviceMemory> metalicMap{ pipeline.CreateTextureImage("resources/vehicle_specular.png", m_CommandPool, m_GraphicsQueue) };
+	std::pair<VkImage, VkDeviceMemory> glossMap{ pipeline.CreateTextureImage("resources/vehicle_gloss.png", m_CommandPool, m_GraphicsQueue) };
+	std::vector<std::pair<VkImage, VkDeviceMemory>> pbrMaps{ normalMap, metalicMap, glossMap };
+	mesh.SetPBRTextures(pipeline.GetDevice(), pipeline.GetPhysDevice(), pbrMaps);
+	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue);
 }
 
 GP2Mesh<Vertex> Scene::CreateRectangle(glm::vec2 center, float width, float height, const glm::vec3& color)
