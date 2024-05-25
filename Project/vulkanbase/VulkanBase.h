@@ -73,6 +73,8 @@ private:
 		//CreateDescriptorSetLayout(device);
 		//createGraphicsPipeline();
 		//createGraphicsPipeline3D();
+		CreateCamAndLightUniformBuffers();
+
 		commandPool.Initialize(device, findQueueFamilies(physicalDevice));
 		commandBuffer = commandPool.createCommandBuffer();
 		
@@ -101,7 +103,7 @@ private:
 		scene.Create2DScene(pipeline2D);
 		scene.Create3DScene(pipeline3D);
 		scene.Create3DTexScene(pipeline3DTex);
-		scene.CreatePBRScene(pipeline3DPBR);
+		scene.CreatePBRScene(pipeline3DPBR, m_CamBuffer, m_LightBuffer);
 		
 		// week 06
 		createSyncObjects();
@@ -111,6 +113,7 @@ private:
 		while (!glfwWindowShouldClose(window)) {
 			glfwPollEvents();
 			// week 06
+			UpdateCamAndLightUniformBuffers();
 			drawFrame();
 		}
 		vkDeviceWaitIdle(device);
@@ -124,6 +127,12 @@ private:
 		pipeline3D.Cleanup();
 		pipeline3DTex.Cleanup();
 		pipeline3DPBR.Cleanup();
+
+		vkDestroyBuffer(device, m_CamBuffer, nullptr);
+		vkFreeMemory(device, m_CamMemory, nullptr);
+
+		vkDestroyBuffer(device, m_LightBuffer, nullptr);
+		vkFreeMemory(device, m_LightMemory, nullptr);
 
 		vkDestroyImageView(device, depthImageView, nullptr);
 		vkDestroyImage(device, depthImage, nullptr);
@@ -197,8 +206,9 @@ private:
 	void initWindow();
 
 	void keyEvent(int key, int scancode, int action, int mods);
+
 	
-	Camera m_Camera{};
+
 	glm::vec2 m_DragStart{};
 
 	//void drawScene();
@@ -227,6 +237,23 @@ private:
 	//
 	GP2CommandPool commandPool;
 	GP2CommandBuffer commandBuffer;
+
+	uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+	void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+	void CreateCamAndLightUniformBuffers();
+	void UpdateCamAndLightUniformBuffers();
+
+	Camera m_Camera{};
+	VkBuffer m_CamBuffer{};
+	VkDeviceMemory m_CamMemory{};
+
+	struct Light
+	{
+		const glm::vec3 direction{ 0.577f, 0.577f, -0.577f };
+		const glm::vec3 color{ 1.f, 1.f, 1.f };
+	} g_Light{};
+	VkBuffer m_LightBuffer{};
+	VkDeviceMemory m_LightMemory{};
 
 	GP2GraphicsPipeline<Vertex> pipeline2D{ "shaders/shader.vert.spv", "shaders/shader.frag.spv" };
 	GP2GraphicsPipeline<Vertex3D> pipeline3D{ "shaders/shader3D.vert.spv", "shaders/shader.frag.spv" };

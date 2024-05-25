@@ -90,11 +90,11 @@ void Scene::Create3DTexScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
 	//pipeline.AddMesh(mesh3, m_CommandPool, m_GraphicsQueue);
 }
 
-void Scene::CreatePBRScene(GP2GraphicsPipeline<VertexPBR>& pipeline)
+void Scene::CreatePBRScene(GP2GraphicsPipeline<VertexPBR>& pipeline, const VkBuffer& cameraBuffer, const VkBuffer& lightBuffer)
 {
 	std::vector<VertexPBR> vertices{};
 	std::vector<uint32_t> indices{};
-	std::string filename{ "resources/vehicle.obj" };
+	std::string filename{ "resources/vehicle2.obj" };
 	LoadModelPBR<VertexPBR>(filename, vertices, indices);
 	GP2Mesh<VertexPBR> mesh{ vertices, indices };
 	mesh.SetTextureImage(pipeline.GetDevice(), pipeline.GetPhysDevice(), pipeline.CreateTextureImage("resources/vehicle_diffuse.png", m_CommandPool, m_GraphicsQueue));
@@ -103,7 +103,7 @@ void Scene::CreatePBRScene(GP2GraphicsPipeline<VertexPBR>& pipeline)
 	std::pair<VkImage, VkDeviceMemory> glossMap{ pipeline.CreateTextureImage("resources/vehicle_gloss.png", m_CommandPool, m_GraphicsQueue) };
 	std::vector<std::pair<VkImage, VkDeviceMemory>> pbrMaps{ normalMap, metalicMap, glossMap };
 	mesh.SetPBRTextures(pipeline.GetDevice(), pipeline.GetPhysDevice(), pbrMaps);
-	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue);
+	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue, cameraBuffer, lightBuffer);
 }
 
 GP2Mesh<Vertex> Scene::CreateRectangle(glm::vec2 center, float width, float height, const glm::vec3& color)

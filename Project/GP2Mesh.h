@@ -20,6 +20,7 @@ public:
 	}
 
 	void Initialize(const VkDevice& device, const VkPhysicalDevice& physDevice, const VkCommandPool commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout);
+	void Initialize(const VkDevice& device, const VkPhysicalDevice& physDevice, const VkCommandPool commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const VkBuffer& cameraBuffer, const VkBuffer& lightBuffer);
 	void Cleanup();
 
 	const std::vector<V>& GetVertices() const { return m_Vertices; }
@@ -74,6 +75,21 @@ inline void GP2Mesh<V>::Initialize(const VkDevice& device, const VkPhysicalDevic
 	m_IndexBuffer.CreateBuffer(*this);
 	m_UniformBuffer.Initialize(device, physDevice, commandPool, graphicsQueue);
 	m_UniformBuffer.CreateBuffer(*this);
+	m_DescriptorPool.InitializeTexture(device);
+	m_DescriptorPool.CreateDescriptorSetsTextures(descriptorSetLayout, m_UniformBuffer, m_TextureImageView, m_TextureSampler);
+}
+
+template<VertexConcept V>
+inline void GP2Mesh<V>::Initialize(const VkDevice& device, const VkPhysicalDevice& physDevice, const VkCommandPool commandPool, const VkQueue& graphicsQueue, const VkDescriptorSetLayout& descriptorSetLayout, const VkBuffer& cameraBuffer, const VkBuffer& lightBuffer)
+{
+	m_Device = device;
+
+	m_VertexBuffer.Initialize(device, physDevice, commandPool, graphicsQueue);
+	m_VertexBuffer.CreateBuffer(*this);
+	m_IndexBuffer.Initialize(device, physDevice, commandPool, graphicsQueue);
+	m_IndexBuffer.CreateBuffer(*this);
+	m_UniformBuffer.Initialize(device, physDevice, commandPool, graphicsQueue);
+	m_UniformBuffer.CreateBuffer(*this);
 	if (!m_UsingPBR)
 	{
 		m_DescriptorPool.InitializeTexture(device);
@@ -82,7 +98,7 @@ inline void GP2Mesh<V>::Initialize(const VkDevice& device, const VkPhysicalDevic
 	else
 	{
 		m_DescriptorPool.InitializePBR(device);
-		m_DescriptorPool.CreateDescriptorSetsPBR(descriptorSetLayout, m_UniformBuffer, m_PBRImageViews, m_PBRSamplers);
+		m_DescriptorPool.CreateDescriptorSetsPBR(descriptorSetLayout, m_UniformBuffer, m_PBRImageViews, m_PBRSamplers, cameraBuffer, lightBuffer);
 	}
 }
 

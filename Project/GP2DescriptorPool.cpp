@@ -44,7 +44,7 @@ void GP2DescriptorPool::InitializeTexture(const VkDevice& device)
 void GP2DescriptorPool::InitializePBR(const VkDevice& device)
 {
 	m_Device = device;
-	std::array<VkDescriptorPoolSize, 5> poolSizes{};
+	std::array<VkDescriptorPoolSize, 7> poolSizes{};
 	poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
@@ -59,6 +59,12 @@ void GP2DescriptorPool::InitializePBR(const VkDevice& device)
 
 	poolSizes[4].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 	poolSizes[4].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+	poolSizes[5].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[5].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+	poolSizes[6].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	poolSizes[6].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
 
 	VkDescriptorPoolCreateInfo poolInfo{};

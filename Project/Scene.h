@@ -13,7 +13,7 @@ public:
 	void Create3DScene(GP2GraphicsPipeline<Vertex3D>& pipeline);
 	void Create2DScene(GP2GraphicsPipeline<Vertex>& pipeline);
 	void Create3DTexScene(GP2GraphicsPipeline<Vertex3D>& pipeline);
-	void CreatePBRScene(GP2GraphicsPipeline<VertexPBR>& pipeline);
+	void CreatePBRScene(GP2GraphicsPipeline<VertexPBR>& pipeline, const VkBuffer& cameraBuffer, const VkBuffer& lightBuffer);
 
 private:
 	GP2Mesh<Vertex> CreateRectangle(glm::vec2 center, float width, float height, const glm::vec3& color = {1.f, 1.f, 1.f});

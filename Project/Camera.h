@@ -6,8 +6,9 @@
 constexpr auto TO_DEGREES = (180.0f / 3.141f);
 constexpr auto TO_RADIANS(3.141f / 180.0f);
 
-struct Camera
+class Camera
 {
+private:
     glm::mat4 CreateRotationX(float pitch)
     {
         glm::mat4 bufferMatrix{};
@@ -46,7 +47,11 @@ struct Camera
         return CreateRotationX(pitch) * CreateRotationY(yaw) * CreateRotationZ(roll);
     }
 
-    Camera() = default;
+public:
+    Camera()
+    {
+        Camera({ 0.f, -2.f, 2.f }, 90.f);
+    }
 
     Camera(const glm::vec3& _origin, float _fovAngle) :
         origin{ _origin },
@@ -54,7 +59,11 @@ struct Camera
     {
     }
 
+    ~Camera() = default;
 
+    const glm::vec3& GetOrigin() const { return origin; }
+
+private:
     glm::vec3 origin{ 0.f, -2.f, 2.f };
     float fovAngle{ 90.f };
 
@@ -72,6 +81,7 @@ struct Camera
     bool firstUpdate{ true };
     float deltaT{};
 
+public:
     glm::mat4 CalculateCameraToWorld()
     {
 
@@ -99,31 +109,33 @@ struct Camera
 
     void KeyEvent(int key, int scancode, int action, int mods)
     {
+        //std::cout << origin.x << ", " << origin.y << ", " << origin.z << "\n";
+        //std::cout << deltaT << '\n';
         //implement movement
         const float movementSpeed{ 10.f * deltaT };
         if (key == GLFW_KEY_W && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            this->origin += forward * movementSpeed;
+            origin += forward * movementSpeed;
         }
-        else if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            this->origin -= forward * movementSpeed;
+            origin -= forward * movementSpeed;
         }
-        else if (key == GLFW_KEY_A && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        if (key == GLFW_KEY_A && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            this->origin -= right * movementSpeed;
+            origin -= right * movementSpeed;
         }
-        else if (key == GLFW_KEY_D && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        if (key == GLFW_KEY_D && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            this->origin += right * movementSpeed;
+            origin += right * movementSpeed;
         }
-        else if (key == GLFW_KEY_SPACE && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        if (key == GLFW_KEY_SPACE && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            this->origin += up * movementSpeed;
+            origin += up * movementSpeed;
         }
-        else if (key == GLFW_KEY_LEFT_CONTROL && (action == GLFW_REPEAT || action == GLFW_PRESS))
+        if (key == GLFW_KEY_LEFT_CONTROL && (action == GLFW_REPEAT || action == GLFW_PRESS))
         {
-            this->origin -= up * movementSpeed;
+            origin -= up * movementSpeed;
         }
     }
 
@@ -132,11 +144,14 @@ struct Camera
         if (firstUpdate)
         {
             startTime = std::chrono::high_resolution_clock::now();
+            firstUpdate = false;
         }
         auto currentTime = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
         deltaT = deltaTime;
         startTime = currentTime;
+
+        //std::cout << deltaT << '\n';
 
         //Mouse Input
         double mouseX{}, mouseY{};
@@ -197,6 +212,6 @@ struct Camera
         //std::cout << "Right: " << right.x << ", " << right.y << ", " << right.z << '\n';
         //std::cout << "Yaw: " << totalYaw << ", " << "Pitch: " << totalPitch << '\n';
         //std::cout << "DeltaT: " << deltaT << '\n';
-        firstUpdate = false;
+
     }
 };

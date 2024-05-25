@@ -21,6 +21,7 @@ public:
 	void Record(GP2CommandBuffer& buffer, int imageIdx, const VkExtent2D& swapChainExtent);
 	void Update(uint32_t imageIdx, const glm::mat4& cameraToWorld);
 	void AddMesh(GP2Mesh<V>& mesh, const GP2CommandPool& commandPool, const VkQueue& queue);
+	void AddMesh(GP2Mesh<V>& mesh, const GP2CommandPool& commandPool, const VkQueue& queue, const VkBuffer& cameraBuffer, const VkBuffer& lightBuffer);
 	void SetUBO(UniformBufferObject ubo);
 
 	const VkDevice GetDevice() const { return m_Device; };
@@ -132,6 +133,13 @@ template<VertexConcept V>
 inline void GP2GraphicsPipeline<V>::AddMesh(GP2Mesh<V>& mesh, const GP2CommandPool& commandPool, const VkQueue& queue)
 {
 	mesh.Initialize(m_Device, m_PhysDevice, commandPool.GetCommandPool(), queue, m_DescriptorSetLayout);
+	m_pMeshes.push_back(mesh);
+}
+
+template<VertexConcept V>
+inline void GP2GraphicsPipeline<V>::AddMesh(GP2Mesh<V>& mesh, const GP2CommandPool& commandPool, const VkQueue& queue, const VkBuffer& cameraBuffer, const VkBuffer& lightBuffer)
+{
+	mesh.Initialize(m_Device, m_PhysDevice, commandPool.GetCommandPool(), queue, m_DescriptorSetLayout, cameraBuffer, lightBuffer);
 	m_pMeshes.push_back(mesh);
 }
 
@@ -441,7 +449,7 @@ inline void GP2GraphicsPipeline<V>::CreateDescriptorSetLayout(const VkDevice& vk
 	uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 	uboLayoutBinding.descriptorCount = 1;
 	uboLayoutBinding.pImmutableSamplers = nullptr; // Optional
-	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	uboLayoutBinding.stageFlags = VK_SHADER_STAGE_ALL_GRAPHICS;
 
 	if (!std::is_same<V, VertexPBR>::value)
 	{
@@ -494,11 +502,27 @@ inline void GP2GraphicsPipeline<V>::CreateDescriptorSetLayout(const VkDevice& vk
 		glossSamplerLayoutBinding.pImmutableSamplers = nullptr;
 		glossSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-		std::array<VkDescriptorSetLayoutBinding, 5> bindings = { uboLayoutBinding, 
+		VkDescriptorSetLayoutBinding cameraBinding{};
+		cameraBinding.binding = 5;
+		cameraBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		cameraBinding.descriptorCount = 1;
+		cameraBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		cameraBinding.pImmutableSamplers = nullptr;
+
+		VkDescriptorSetLayoutBinding lightBinding{};
+		lightBinding.binding = 6;
+		lightBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		lightBinding.descriptorCount = 1;
+		lightBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		lightBinding.pImmutableSamplers = nullptr;
+
+		std::array<VkDescriptorSetLayoutBinding, 7> bindings = { uboLayoutBinding, 
 																 albedoSamplerLayoutBinding, 
 																 normalSamplerLayoutBinding,
 																 metallicSamplerLayoutBinding,
-																 glossSamplerLayoutBinding};
+																 glossSamplerLayoutBinding,
+																 cameraBinding,
+																 lightBinding};
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 		layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());

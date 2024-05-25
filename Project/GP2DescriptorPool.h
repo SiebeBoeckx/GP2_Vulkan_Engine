@@ -140,7 +140,7 @@ public:
 	}
 
 	template <VertexConcept V>
-	void CreateDescriptorSetsPBR(const VkDescriptorSetLayout& descriptorSetLayout, const GP2UniformBuffer<V>& uniformBuffers, const std::vector<VkImageView>& pbrImgViews, const std::vector<VkSampler> pbrSamplers)
+	void CreateDescriptorSetsPBR(const VkDescriptorSetLayout& descriptorSetLayout, const GP2UniformBuffer<V>& uniformBuffers, const std::vector<VkImageView>& pbrImgViews, const std::vector<VkSampler> pbrSamplers, const VkBuffer& cameraBuffer, const VkBuffer& lightBuffer)
 	{
 		//check order of operations
 		if (!m_Created)
@@ -162,7 +162,8 @@ public:
 		}
 
 		//populate every descriptor
-		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+		{
 			//fill info
 			VkDescriptorBufferInfo bufferInfo{};
 			bufferInfo.buffer = uniformBuffers.GetUniformBufferInfos()[i]->GetBuffer();
@@ -171,7 +172,7 @@ public:
 
 			if (pbrImgViews.size() == 4 && pbrSamplers.size() == 4)
 			{
-				std::array<VkWriteDescriptorSet, 5> descriptorWrites{};
+				std::array<VkWriteDescriptorSet, 7> descriptorWrites{};
 
 				descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 				descriptorWrites[0].dstSet = m_DescriptorSets[i];
@@ -202,6 +203,33 @@ public:
 					descriptorWrites[j + 1].descriptorCount = 1;
 					descriptorWrites[j + 1].pImageInfo = &imageInfos[j];
 				}
+
+				VkDescriptorBufferInfo cameraBufferInfo{};
+				cameraBufferInfo.buffer = cameraBuffer;
+				cameraBufferInfo.offset = 0;
+				cameraBufferInfo.range = sizeof(glm::vec3); // Assuming camera position is a vec3
+				
+				descriptorWrites[5].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				descriptorWrites[5].dstSet = m_DescriptorSets[i];
+				descriptorWrites[5].dstBinding = 5;
+				descriptorWrites[5].dstArrayElement = 0;
+				descriptorWrites[5].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				descriptorWrites[5].descriptorCount = 1;
+				descriptorWrites[5].pBufferInfo = &cameraBufferInfo;
+				
+				VkDescriptorBufferInfo lightBufferInfo{};
+				lightBufferInfo.buffer = lightBuffer;
+				lightBufferInfo.offset = 0;
+				lightBufferInfo.range = 2 * sizeof(glm::vec3); // Assuming light position and color are vec3
+				
+				descriptorWrites[6].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+				descriptorWrites[6].dstSet = m_DescriptorSets[i];
+				descriptorWrites[6].dstBinding = 6;
+				descriptorWrites[6].dstArrayElement = 0;
+				descriptorWrites[6].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+				descriptorWrites[6].descriptorCount = 1;
+				descriptorWrites[6].pBufferInfo = &lightBufferInfo;
+
 				vkUpdateDescriptorSets(m_Device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 			}
 			else
