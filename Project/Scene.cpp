@@ -92,6 +92,7 @@ void Scene::Create3DTexScene(GP2GraphicsPipeline<Vertex3D>& pipeline)
 
 void Scene::CreatePBRScene(GP2GraphicsPipeline<VertexPBR>& pipeline, const VkBuffer& cameraBuffer, const VkBuffer& lightBuffer)
 {
+	//Vehicle
 	std::vector<VertexPBR> vertices{};
 	std::vector<uint32_t> indices{};
 	std::string filename{ "resources/vehicle2.obj" };
@@ -103,7 +104,23 @@ void Scene::CreatePBRScene(GP2GraphicsPipeline<VertexPBR>& pipeline, const VkBuf
 	std::pair<VkImage, VkDeviceMemory> glossMap{ pipeline.CreateTextureImage("resources/vehicle_gloss.png", m_CommandPool, m_GraphicsQueue) };
 	std::vector<std::pair<VkImage, VkDeviceMemory>> pbrMaps{ normalMap, metalicMap, glossMap };
 	mesh.SetPBRTextures(pipeline.GetDevice(), pipeline.GetPhysDevice(), pbrMaps);
+	mesh.m_Pos = glm::vec3{ 0.f, 50.f, 0.f };
 	pipeline.AddMesh(mesh, m_CommandPool, m_GraphicsQueue, cameraBuffer, lightBuffer);
+
+	//Pikachu
+	std::vector<VertexPBR> vertices2{};
+	std::vector<uint32_t> indices2{};
+	std::string filename2{ "resources/Pocket_Pikachu.obj" };
+	LoadModelPBR<VertexPBR>(filename2, vertices2, indices2);
+	GP2Mesh<VertexPBR> mesh2{ vertices2, indices2 };
+	mesh2.SetTextureImage(pipeline.GetDevice(), pipeline.GetPhysDevice(), pipeline.CreateTextureImage("resources/Pocket_Pikachu_albedo.jpeg", m_CommandPool, m_GraphicsQueue));
+	std::pair<VkImage, VkDeviceMemory> normalMap2{ pipeline.CreateTextureImage("resources/Pocket_Pikachu_normal.png", m_CommandPool, m_GraphicsQueue) };
+	std::pair<VkImage, VkDeviceMemory> metalicMap2{ pipeline.CreateTextureImage("resources/Pocket_Pikachu_metallic.jpeg", m_CommandPool, m_GraphicsQueue) };
+	std::pair<VkImage, VkDeviceMemory> glossMap2{ pipeline.CreateTextureImage("resources/Pocket_Pikachu_roughness.jpeg", m_CommandPool, m_GraphicsQueue) };
+	std::vector<std::pair<VkImage, VkDeviceMemory>> pbrMaps2{ normalMap2, metalicMap2, glossMap2 };
+	mesh2.SetPBRTextures(pipeline.GetDevice(), pipeline.GetPhysDevice(), pbrMaps2);
+	mesh2.m_Pos = glm::vec3{ 0.f, 0.f, 0.f };
+	pipeline.AddMesh(mesh2, m_CommandPool, m_GraphicsQueue, cameraBuffer, lightBuffer);
 }
 
 GP2Mesh<Vertex> Scene::CreateRectangle(glm::vec2 center, float width, float height, const glm::vec3& color)

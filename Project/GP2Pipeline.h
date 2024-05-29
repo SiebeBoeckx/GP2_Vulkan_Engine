@@ -82,7 +82,7 @@ inline void GP2GraphicsPipeline<V>::Update(uint32_t imageIdx, const glm::mat4& c
 {
 	for (int i{}; i < m_pMeshes.size(); ++i)
 	{
-		m_pMeshes[i].GetWriteAbleUniformBuffer().Update(imageIdx, cameraToWorld);
+		m_pMeshes[i].GetWriteAbleUniformBuffer().Update(imageIdx, cameraToWorld, m_pMeshes[i].m_Pos);
 	}
 }
 

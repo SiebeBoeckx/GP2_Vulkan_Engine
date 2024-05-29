@@ -10,6 +10,7 @@
 #include <chrono>
 #include "Vertexes.h"
 #include "vulkanbase/VulkanUtil.h"
+#include <iostream>
 
 struct UniformBufferObject {
 	glm::mat4 model;
@@ -220,14 +221,20 @@ public:
 		}
 	}
 
-	void Update(uint32_t currentImage, const glm::mat4& cameraToWorld)
+	void Update(uint32_t currentImage, const glm::mat4& cameraToWorld, const glm::vec3& pos)
 	{
 		static auto startTime = std::chrono::high_resolution_clock::now();
 	
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+		//std::cout << pos.x << ", " << pos.y << ", " << pos.z << '\n';
 	
-		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(pos.x, pos.y, pos.z));
+		model = glm::rotate(model, time * glm::radians(20.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.model = model;
+
 		ubo.view = glm::lookAt(glm::vec3(cameraToWorld[3]), glm::vec3(cameraToWorld[3]) + glm::vec3(cameraToWorld[2]), glm::vec3(cameraToWorld[1]));
 		ubo.proj = glm::perspective(glm::radians(45.0f), WIDTH / static_cast<float>(HEIGHT), 0.1f, 10000.0f);
 		ubo.proj[1][1] *= -1;
@@ -241,10 +248,10 @@ public:
 	void SetUBO(UniformBufferObject newUbo) { ubo = newUbo; };
 
 	std::vector<void*>& GetWritableMappedUniformBuffers() { return uniformBuffersMapped; }
-
 private:
 	std::vector<GP2DataBuffer*> uniformBufferInfos{};
 	std::vector<void*> uniformBuffersMapped{};
 	UniformBufferObject ubo{};
 	std::chrono::steady_clock::time_point startTime{};
+
 };

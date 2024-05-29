@@ -48,17 +48,16 @@ void VulkanBase::drawFrame() {
 	commandBuffer.beginRecording(renderPass, swapChainFramebuffers, imageIndex, swapChainExtent);
 
 	pipeline2D.Record(commandBuffer, imageIndex, swapChainExtent);
-	pipeline3D.Record(commandBuffer, imageIndex, swapChainExtent);
-	pipeline3DTex.Record(commandBuffer, imageIndex, swapChainExtent);
+	//pipeline3D.Record(commandBuffer, imageIndex, swapChainExtent);
+	//pipeline3DTex.Record(commandBuffer, imageIndex, swapChainExtent);
 	pipeline3DPBR.Record(commandBuffer, imageIndex, swapChainExtent);
 	//recordCommandBuffer(imageIndex);
 	commandBuffer.endRecording();
 
 	//ubo.Update(imageIndex);
 	m_Camera.Update(window, m_DragStart);
-	//pipeline2D.Update(imageIndex);
-	pipeline3D.Update(imageIndex, m_Camera.CalculateCameraToWorld());
-	pipeline3DTex.Update(imageIndex, m_Camera.CalculateCameraToWorld());
+	//pipeline3D.Update(imageIndex, m_Camera.CalculateCameraToWorld());
+	//pipeline3DTex.Update(imageIndex, m_Camera.CalculateCameraToWorld());
 	pipeline3DPBR.Update(imageIndex, m_Camera.CalculateCameraToWorld());
 
 	VkSubmitInfo submitInfo{};

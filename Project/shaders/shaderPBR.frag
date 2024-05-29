@@ -54,7 +54,7 @@ float saturate(float value) {
 
 void main() {
 
-    vec4 ambientColor = vec4(0.025f, 0.025f, 0.025f, 1.f);
+    float ambient = 0.25f;
 
     vec3 binormal = normalize(cross(TBN[2], TBN[0]));
 
@@ -76,15 +76,15 @@ void main() {
     float cosineLaw = saturate(dot(tangentSpaceNormal, -light.direction));
     //float cosineLaw = 1;
   
-    if(cosineLaw < 0)
-    {
-        FragColor = ambientColor;
-        return;
-    }
-
 	//sample diffuse color
     vec4 diffuseSample = texture(albedoMap, TexCoords); //Diffuse
     vec3 diffuseColor = diffuseSample.rgb / PI; //Diffuse
+
+    if(cosineLaw < 0)
+    {
+        FragColor = vec4(diffuseSample.xyz * ambient, 1.f);
+        return;
+    }
 
 	//Phong
     const float shininess = 25.f;
@@ -95,7 +95,7 @@ void main() {
     
     vec3 phongColor = Phong(specular, phongExp, -light.direction, viewDirection, tangentSpaceNormal);
     
-    vec3 returnColor = (g_LightIntensity * diffuseColor) * cosineLaw + phongColor + ambientColor.xyz;
+    vec3 returnColor = (g_LightIntensity * diffuseColor) * cosineLaw + phongColor + diffuseSample.xyz * ambient;
     returnColor = MaxToOne(returnColor);
     
     FragColor = vec4(returnColor, 1.f);

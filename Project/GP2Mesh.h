@@ -36,6 +36,7 @@ public:
 	void SetTextureImage(const VkDevice& device, const VkPhysicalDevice& physDevice, const std::pair<VkImage, VkDeviceMemory>& imagePair);
 	void SetPBRTextures(const VkDevice& device, const VkPhysicalDevice& physDevice, const std::vector<std::pair<VkImage, VkDeviceMemory>>& pbrPairs);
 
+	glm::vec3 m_Pos{ 0.f, 0.f, 0.f };
 private:
 	VkDevice m_Device{ VK_NULL_HANDLE };
 
